@@ -1,0 +1,7 @@
+# (uncomment to add a dependency)
+ dependencies:
+  - name: 'cheetah-grid'
+    version: '1.16.0'
+    src: 'htmlwidgets/cheetah-grid/dist'
+    script: 'cheetahGrid.es5.min.js'
+    stylesheet:
