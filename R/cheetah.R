@@ -6,10 +6,21 @@
 #' @import jsonlite
 #'
 #' @export
-cheetah <- function(data, width = NULL, height = NULL, elementId = NULL) {
+cheetah <- function(
+  data,
+  columns = NULL,
+  width = NULL,
+  height = NULL,
+  elementId = NULL
+) {
+  stopifnot(
+    is.null(columns) |
+      is_named_list(columns) & names(columns) %in% colnames(data)
+  )
+  columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
   data <- toJSON(data, dataframe = "rows")
   # forward options using x
-  x = list(data = data)
+  x = list(data = data, columns = columns)
 
   # create widget
   htmlwidgets::createWidget(
@@ -39,13 +50,21 @@ cheetah <- function(data, width = NULL, height = NULL, elementId = NULL) {
 #' @name cheetah-shiny
 #'
 #' @export
-cheetahOutput <- function(outputId, width = '100%', height = '400px'){
-  htmlwidgets::shinyWidgetOutput(outputId, 'cheetah', width, height, package = 'cheetahR')
+cheetahOutput <- function(outputId, width = '100%', height = '400px') {
+  htmlwidgets::shinyWidgetOutput(
+    outputId,
+    'cheetah',
+    width,
+    height,
+    package = 'cheetahR'
+  )
 }
 
 #' @rdname cheetah-shiny
 #' @export
 rendercheetah <- function(expr, env = parent.frame(), quoted = FALSE) {
-  if (!quoted) { expr <- substitute(expr) } # force quoted
+  if (!quoted) {
+    expr <- substitute(expr)
+  } # force quoted
   htmlwidgets::shinyRenderWidget(expr, cheetahOutput, env, quoted = TRUE)
 }
