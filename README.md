@@ -24,7 +24,7 @@ Once available on CRAN or GitHub, you’ll be able to install it using:
 ```
 
 ## Getting Started
-So far, `cheetah()` is available to quick render a dataframe in R
+So far, `cheetah()` is available to render a dataframe in R
 
 ```{r example}
 library(cheetahR)
