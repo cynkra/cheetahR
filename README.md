@@ -62,10 +62,12 @@ You may as well bundle for `dev` using `packer::bundle_dev()` when in developer 
 
 ### Debugging steps
 1. Once you run a function, for instance, `cheetah(iris)`, open the viewer on a web browser window (preferably Chrome as it is used to illustrate the action in this step). Note! Other browser pages may differ.
-2. Right-click on the widget
-3. Navigate to the "inspect" option on the drop-down menu
-4. At the top, where the tabs are displayed, navigate to the "Sources" tab. Open from the sidepanel "cheetahr/srcjs/widgets/cheetah.js" script
-5. Once the "cheetah.js" is opened on the main panel. You can set a breakpoint on any line number of the script and reload the page.
+2. Right-click on the widget and navigate to the "inspect" option on the drop-down menu
+![widget opened on the browser](inst/images/image1.png)
+3. At the top, where the tabs are displayed, navigate to the "Sources" tab. Open from the sidepanel "cheetahr/srcjs/widgets/cheetah.js" script
+![Inspector tabs are opened](inst/images/image2.png)
+4. Once the "cheetah.js" is opened on the main panel. You can set a breakpoint on any line number of the script and reload the page.
+![The breakpoint is shown](inst/images/image3.png)
 
 ## Acknowledgments
 This package is built on top of the amazing [Cheetah Grid](https://github.com/future-architect/cheetah-grid) JavaScript library.
