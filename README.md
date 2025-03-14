@@ -1,14 +1,14 @@
 # cheetahR
 
-cheetahR is an R package that brings the power of [Cheetah Grid](https://github.com/future-architect/cheetah-grid) to R. Designed for speed and efficiency, cheetahR will allow you to render millions of rows in just seconds, making it an excellent alternative to reactable and other R table widgets.
+cheetahR is an R package that brings the power of [Cheetah Grid](https://github.com/future-architect/cheetah-grid) to R. Designed for speed and efficiency, cheetahR will allow you to render millions of rows in just seconds, making it an excellent alternative to reactable and other R table widgets. The goal of cheetahR is to wrap the JavaScript functions of Cheetah Grid and make them readily available for R users, providing a seamless and high-performance table widget for R applications.
 
 ## Features
 
-✅ Ultra-fast rendering of large datasets
-✅ Lightweight and efficient memory usage
-✅ Customizable styling and formatting
-✅ Smooth scrolling and interaction
-✅ Seamless integration with R and Shiny
+- Ultra-fast rendering of large datasets
+- Lightweight and efficient memory usage
+- Customizable styling and formatting
+- Smooth scrolling and interaction
+- Seamless integration with R and Shiny
 
 ## Installation (Coming soon)
 
