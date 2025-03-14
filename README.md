@@ -42,11 +42,23 @@ cheetah(
 )
 ```
 
-## Shiny Integration
-cheetahR will be fully compatible with Shiny, allowing for dynamic and interactive tables in web applications.
+## API Integration
+cheetahR is compatible with Shiny, allowing for dynamic and interactive tables in web applications. Although still a work in progress.
 
 ## Contributing
 We welcome contributions! If you’d like to help improve cheetahR, feel free to submit issues, feature requests, or pull requests.
+
+### Software Pre-requiste
+To contribute to this project, some software installations are required, such as `npm`, `node`, and `packer`. Please follow the slides attached to help you get started.  [Software pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites). Click here to install [packer](https://rsc.cynkra.com/js4Shiny/#/solutions). 
+
+When you are in the project, do the following:
+```{r} 
+packer::npm_install()
+# Change the code and then rebundle
+packer::bundle("development") # For developement mode
+packer::bundle() # For production. Defaut!
+```
+You may as well bundle for `dev` using `packer::bundle_dev()` when in developer mode and when ready for production use `packer::bundle_prod()`. You may also consider `watch()` which watches for changes in the `srcjs` and rebuilds if necessary, equivalent to `⁠npm run watch⁠`.
 
 ## Acknowledgments
 This package is built on top of the amazing [Cheetah Grid](https://github.com/future-architect/cheetah-grid) JavaScript library.
