@@ -60,5 +60,12 @@ packer::bundle() # For production. Defaut!
 ```
 You may as well bundle for `dev` using `packer::bundle_dev()` when in developer mode and when ready for production use `packer::bundle_prod()`. You may also consider `watch()` which watches for changes in the `srcjs` and rebuilds if necessary, equivalent to `⁠npm run watch⁠`.
 
+### Debugging steps
+1. Once you run a function, for instance, `cheetah(iris)`, open the viewer on a web browser window (preferably Chrome as it is used to illustrate the action in this step). Note! Other browser pages may differ.
+2. Right-click on the widget
+3. Navigate to the "inspect" option on the drop-down menu
+4. At the top, where the tabs are displayed, navigate to the "Sources" tab. Open from the sidepanel "cheetahr/srcjs/widgets/cheetah.js" script
+5. Once the "cheetah.js" is opened on the main panel. You can set a breakpoint on any line number of the script and reload the page.
+
 ## Acknowledgments
 This package is built on top of the amazing [Cheetah Grid](https://github.com/future-architect/cheetah-grid) JavaScript library.
