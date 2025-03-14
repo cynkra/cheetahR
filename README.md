@@ -49,7 +49,7 @@ cheetahR is compatible with Shiny, allowing for dynamic and interactive tables i
 We welcome contributions! If you’d like to help improve cheetahR, feel free to submit issues, feature requests, or pull requests.
 
 ### Software Pre-requiste
-To contribute to this project, some software installations are required, such as `npm`, `node`, and `packer`. Please follow the slides attached to help you get started.  [Software pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites). Click here to install [packer](https://rsc.cynkra.com/js4Shiny/#/solutions). 
+To contribute to this project, some software installations are required, such as `npm`, `node`, and `packer`. Please follow the slides attached to help you get started [pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites). Click here to install [packer](https://rsc.cynkra.com/js4Shiny/#/solutions). 
 
 When you are in the project, do the following:
 ```{r} 
