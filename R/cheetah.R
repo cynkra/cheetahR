@@ -1,6 +1,12 @@
-#' <Add Title>
+#' Cheetah
 #'
-#' <Add Description>
+#' Some description.
+#'
+#' @param data Data
+#' @param columns Columns
+#' @param width Width
+#' @param height Height
+#' @param elementId Element ID
 #'
 #' @import htmlwidgets
 #' @import jsonlite
