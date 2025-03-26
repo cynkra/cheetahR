@@ -18,3 +18,4 @@ Suggests:
     utils,
     shiny
 Config/testthat/edition: 3
+

@@ -1,15 +1,18 @@
-#' Cheetah
+#' Create a Cheetah Grid widget
 #'
-#' Some description.
+#' Creates a high-performance table widget using Cheetah Grid.
 #'
-#' @param data Data
-#' @param columns Columns
-#' @param width Width
-#' @param height Height
-#' @param elementId Element ID
+#' @param data A data frame or matrix to display
+#' @param columns A list of column definitions. Each column can be customized using
+#'   \code{column_def()}.
+#' @param width Width of the widget
+#' @param height Height of the widget
+#' @param elementId The element ID for the widget
+#' @param rownames Logical. Whether to show rownames. Defaults to TRUE.
 #'
 #' @import htmlwidgets
 #' @import jsonlite
+#' @import tibble
 #'
 #' @export
 cheetah <- function(
@@ -17,16 +20,25 @@ cheetah <- function(
   columns = NULL,
   width = NULL,
   height = NULL,
-  elementId = NULL
+  elementId = NULL,
+  rownames = TRUE
 ) {
   stopifnot(
     is.null(columns) |
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
   columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
-  data <- toJSON(data, dataframe = "rows")
+  
+  # Only show rownames if they are character strings (meaningful) and rownames is TRUE
+  if (rownames && is.character(attr(data, "row.names"))) {
+    data_rn <- tibble::rownames_to_column(data, var = " ")
+  } else {
+    data_rn <- data
+  }
+  
+  data_json <- toJSON(data_rn, dataframe = "rows")
   # forward options using x
-  x = list(data = data, columns = columns)
+  x = list(data = data_json, columns = columns)
 
   # create widget
   htmlwidgets::createWidget(
