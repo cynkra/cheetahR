@@ -2,14 +2,21 @@
 % Please edit documentation in R/cheetah.R
 \name{cheetah}
 \alias{cheetah}
-\title{\if{html}{\out{
-<Add Title>
-}}}
+\title{Cheetah}
 \usage{
-cheetah(data, width = NULL, height = NULL, elementId = NULL)
+cheetah(data, columns = NULL, width = NULL, height = NULL, elementId = NULL)
+}
+\arguments{
+\item{data}{Data}
+
+\item{columns}{Columns}
+
+\item{width}{Width}
+
+\item{height}{Height}
+
+\item{elementId}{Element ID}
 }
 \description{
-\if{html}{\out{
-<Add Description>
-}}
+Some description.
 }
