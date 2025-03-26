@@ -10,3 +10,4 @@
 ^LICENSE\.md$
 ^app\.R$
 ^script$
+^\.github$
