@@ -14,7 +14,7 @@ HTMLWidgets.widget({
 
     return {
 
-      renderValue: function (x) {
+      renderValue: function (x, id = el.id) {
         let columns;
         const header = Object.keys(x.data[0])
         const defaultCol = header.map((key) => {
@@ -49,8 +49,11 @@ HTMLWidgets.widget({
           CHANGED_VALUE,
         } = cheetahGrid.ListGrid.EVENT_TYPE;
 
-        grid.listen(CLICK_CELL, (...args) => console.log(args));
-        grid.listen(CHANGED_VALUE, (...args) => console.log(args));
+        grid.listen(
+          CLICK_CELL, (...args) => {
+            Shiny.setInputValue(`${id}_click_cell`, args);
+          }
+        );
       },
 
       resize: function (width, height) {
