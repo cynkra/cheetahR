@@ -4,7 +4,8 @@ column_def <- function(
   min_width = NULL,
   max_width = NULL,
   column_type = NULL,
-  action = NULL
+  action = NULL,
+  style = NULL
 ) {
   list(
     caption = name,
@@ -12,6 +13,7 @@ column_def <- function(
     minWidth = min_width,
     maxWidth = max_width,
     columnType = column_type,
-    action = action
+    action = action,
+    style = style
   )
 }

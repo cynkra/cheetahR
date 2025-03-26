@@ -20,3 +20,12 @@ add_field_to_list <- function(x) {
 convert_row_column <- function(data) {
   tibble::rownames_to_column(data, "_row")
 }
+
+column_style_check <- function(columns) {
+ lapply(columns, function(x){
+   if("style" %in% names(x) && !is.null(x$style)) {
+     stopifnot("The style attribute expects a list" = is.list(x$style) && !is.null(names(x$style)))
+   }
+ })
+ invisible()
+}
