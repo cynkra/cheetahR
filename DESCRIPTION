@@ -1,11 +1,12 @@
 Package: cheetahR
-Title: What the Package Does (One Line, Title Case)
+Title: High Performance Tables Using Cheetah Grid
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
 License: GPL (>= 3)
+Authors@R: c(
+    person("Olajoke", "Oladipo", , "olajoke@cynkra.com", role = c("aut", "cre"))
+    )
+Description: A high-performance table widget for R using Cheetah Grid. Designed for 
+    speed and efficiency, cheetahR allows rendering millions of rows in milliseconds.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
