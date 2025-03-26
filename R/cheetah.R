@@ -17,11 +17,13 @@ cheetah <- function(
     is.null(columns) |
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
-  columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
-  data <- toJSON(data, dataframe = "rows")
-  # forward options using x
-  x = list(data = data, columns = columns)
 
+  data_rn <- tibble::rownames_to_column(data, var = " ")
+  columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
+
+  data_json <- toJSON(data_rn, dataframe = "rows")
+  # forward options using x
+  x = list(data = data_json, columns = columns)
   # create widget
   htmlwidgets::createWidget(
     name = 'cheetah',
