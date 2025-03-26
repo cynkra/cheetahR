@@ -27,6 +27,8 @@ cheetah <- function(
     is.null(columns) |
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
+  column_style_check(columns)
+
   columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
   
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
