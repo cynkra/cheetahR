@@ -2,14 +2,31 @@
 % Please edit documentation in R/cheetah.R
 \name{cheetah}
 \alias{cheetah}
-\title{\if{html}{\out{
-<Add Title>
-}}}
+\title{Create a Cheetah Grid widget}
 \usage{
-cheetah(data, width = NULL, height = NULL, elementId = NULL)
+cheetah(
+  data,
+  columns = NULL,
+  width = NULL,
+  height = NULL,
+  elementId = NULL,
+  rownames = TRUE
+)
+}
+\arguments{
+\item{data}{A data frame or matrix to display}
+
+\item{columns}{A list of column definitions. Each column can be customized using
+\code{column_def()}.}
+
+\item{width}{Width of the widget}
+
+\item{height}{Height of the widget}
+
+\item{elementId}{The element ID for the widget}
+
+\item{rownames}{Logical. Whether to show rownames. Defaults to TRUE.}
 }
 \description{
-\if{html}{\out{
-<Add Description>
-}}
+Creates a high-performance table widget using Cheetah Grid.
 }
