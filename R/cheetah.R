@@ -1,9 +1,17 @@
-#' <Add Title>
+#' Create a Cheetah Grid widget
 #'
-#' <Add Description>
+#' Creates a high-performance table widget using Cheetah Grid.
+#'
+#' @param data A data frame or matrix to display
+#' @param columns A list of column definitions. Each column can be customized using
+#'   \code{column_def()}.
+#' @param width Width of the widget
+#' @param height Height of the widget
+#' @param elementId The element ID for the widget
 #'
 #' @import htmlwidgets
 #' @import jsonlite
+#' @import tibble
 #'
 #' @export
 cheetah <- function(
@@ -17,13 +25,12 @@ cheetah <- function(
     is.null(columns) |
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
-
-  data_rn <- tibble::rownames_to_column(data, var = " ")
   columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
-
+  data_rn <- tibble::rownames_to_column(data, var = " ")
   data_json <- toJSON(data_rn, dataframe = "rows")
   # forward options using x
   x = list(data = data_json, columns = columns)
+
   # create widget
   htmlwidgets::createWidget(
     name = 'cheetah',
