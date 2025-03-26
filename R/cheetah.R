@@ -26,7 +26,14 @@ cheetah <- function(
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
   columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
-  data_rn <- tibble::rownames_to_column(data, var = " ")
+  
+  # Only show rownames if they are character strings (meaningful)
+  if (is.character(attr(data, "row.names"))) {
+    data_rn <- tibble::rownames_to_column(data, var = " ")
+  } else {
+    data_rn <- data
+  }
+  
   data_json <- toJSON(data_rn, dataframe = "rows")
   # forward options using x
   x = list(data = data_json, columns = columns)
