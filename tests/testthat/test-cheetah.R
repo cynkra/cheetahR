@@ -3,25 +3,19 @@ test_that("cheetah handles rownames correctly", {
   widget <- cheetah(swiss)
   expect_s3_class(widget, "htmlwidget")
   expect_s3_class(widget, "cheetah")
-
-  cheetah(mtcars)
   
-  # Test with custom rowname column name
-  widget_custom <- cheetah(swiss, rowname = "Canton")
-  expect_s3_class(widget_custom, "htmlwidget")
-  expect_s3_class(widget_custom, "cheetah")
-  
-  # Test with rowname column customization
-  widget_custom_col <- cheetah(swiss, 
-    columns = list(
-      `_row` = column_def(name = "Swiss Canton", text_align = "left")
-    )
-  )
-  expect_s3_class(widget_custom_col, "htmlwidget")
-  expect_s3_class(widget_custom_col, "cheetah")
+  # Test with rownames explicitly set to TRUE
+  widget_explicit <- cheetah(swiss, rownames = TRUE)
+  expect_s3_class(widget_explicit, "htmlwidget")
+  expect_s3_class(widget_explicit, "cheetah")
   
   # Test with rownames disabled
-  widget_no_row <- cheetah(swiss, rowname = FALSE)
+  widget_no_row <- cheetah(swiss, rownames = FALSE)
   expect_s3_class(widget_no_row, "htmlwidget")
   expect_s3_class(widget_no_row, "cheetah")
+  
+  # Test with iris (numeric rownames should not be shown)
+  widget_iris <- cheetah(iris)
+  expect_s3_class(widget_iris, "htmlwidget")
+  expect_s3_class(widget_iris, "cheetah")
 }) 

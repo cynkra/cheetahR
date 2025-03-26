@@ -8,6 +8,7 @@
 #' @param width Width of the widget
 #' @param height Height of the widget
 #' @param elementId The element ID for the widget
+#' @param rownames Logical. Whether to show rownames. Defaults to TRUE.
 #'
 #' @import htmlwidgets
 #' @import jsonlite
@@ -19,7 +20,8 @@ cheetah <- function(
   columns = NULL,
   width = NULL,
   height = NULL,
-  elementId = NULL
+  elementId = NULL,
+  rownames = TRUE
 ) {
   stopifnot(
     is.null(columns) |
@@ -27,8 +29,8 @@ cheetah <- function(
   )
   columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
   
-  # Only show rownames if they are character strings (meaningful)
-  if (is.character(attr(data, "row.names"))) {
+  # Only show rownames if they are character strings (meaningful) and rownames is TRUE
+  if (rownames && is.character(attr(data, "row.names"))) {
     data_rn <- tibble::rownames_to_column(data, var = " ")
   } else {
     data_rn <- data
