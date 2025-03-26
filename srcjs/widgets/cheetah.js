@@ -54,6 +54,12 @@ HTMLWidgets.widget({
             Shiny.setInputValue(`${id}_click_cell`, args);
           }
         );
+
+        grid.listen(
+          CHANGED_VALUE, (...args) => {
+            Shiny.setInputValue(`${id}_changed_value`, args);
+          }
+        );
       },
 
       resize: function (width, height) {
