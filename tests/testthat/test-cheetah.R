@@ -19,3 +19,16 @@ test_that("cheetah handles rownames correctly", {
   expect_s3_class(widget_iris, "htmlwidget")
   expect_s3_class(widget_iris, "cheetah")
 }) 
+
+test_that("test cheetah", {
+
+  server <- function(input, output, session) {
+    output$grid <- rendercheetah({
+      cheetah(data = head(iris))
+    })
+  }
+
+  shiny::testServer(server, {
+    expect_s3_class(session$getOutput("grid"), "json")
+  })
+})
