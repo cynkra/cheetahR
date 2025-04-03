@@ -1,32 +1,46 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # cheetahR
 
-cheetahR is an R package that brings the power of [Cheetah Grid](https://github.com/future-architect/cheetah-grid) to R. Designed for speed and efficiency, cheetahR will allow you to render millions of rows in just a few milliseconds, making it an excellent alternative to reactable and other R table widgets. The goal of cheetahR is to wrap the JavaScript functions of Cheetah Grid and make them readily available for R users, providing a seamless and high-performance table widget for R applications.
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/cheetahR)](https://CRAN.R-project.org/package=cheetahR)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+`cheetahR` is an R package that brings the power of [Cheetah
+Grid](https://github.com/future-architect/cheetah-grid) to R. Designed
+for **speed** and **efficiency**, `cheetahR` will allow you to **render
+millions of rows** in just a few milliseconds, making it an excellent
+alternative to reactable and other R table widgets. The goal of cheetahR
+is to wrap the JavaScript functions of Cheetah Grid and make them
+readily available for R users, providing a seamless and high-performance
+table widget for R applications.
 
 ## Features
 
-- Ultra-fast rendering of large datasets
-- Lightweight and efficient memory usage
-- Customizable styling and formatting
-- Smooth scrolling and interaction
-- Seamless integration with R and Shiny
+- **Ultra-fast** rendering of large datasets.
+- **Lightweight** and efficient memory usage.
+- **Customizable** styling and formatting.
+- **Smooth** scrolling and interaction.
+- **Seamless integration** with R and Shiny.
 
-## Installation (Coming soon)
+## Installation
 
-Once available on CRAN or GitHub, you’ll be able to install it using:
+You can install `cheetahR` from GitHub:
 
 ``` r
-# install.packages("pak")
-# pak::pak("cynkra/cheetahR")
-
-# Install from GitHub (once the package is ready)
-# devtools::install_github("cynkra/cheetahR")
-
+pak::pak("cynkra/cheetahR")
 ```
 
 ## Getting Started
+
 So far, `cheetah()` is available to render a dataframe in R
 
-```{r example}
+``` r
 library(cheetahR)
 
 # Render table
@@ -43,31 +57,58 @@ cheetah(
 ```
 
 ## API Integration
-cheetahR is compatible with Shiny, allowing for dynamic and interactive tables in web applications. Although still a work in progress.
+
+`cheetahR` is compatible with Shiny, allowing for dynamic and
+interactive tables in web applications. Although still a work in
+progress.
 
 ## Contributing
-We welcome contributions! If you’d like to help improve cheetahR, feel free to submit issues, feature requests, or pull requests.
+
+We welcome contributions! If you’d like to help improve `cheetahR`, feel
+free to submit issues, feature requests, or pull requests.
 
 ### Software Pre-requiste
-To contribute to this project, some software installations are required, such as `npm`, `node`, and `packer`. Please follow the slides attached to help you get started [pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites). Click here to install [packer](https://rsc.cynkra.com/js4Shiny/#/solutions). 
+
+To contribute to this project, some software installations are required,
+such as `npm`, `node`, and `packer`. Please follow the slides attached
+to help you get started
+[pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites).
+Click here to install
+[packer](https://rsc.cynkra.com/js4Shiny/#/solutions).
 
 When you are in the project, do the following:
-```{r} 
+
+``` r
 packer::npm_install()
 # Change the code and then rebundle
 packer::bundle("development") # For developement mode
 packer::bundle() # For production. Defaut!
 ```
-You may as well bundle for `dev` using `packer::bundle_dev()` when in developer mode and when ready for production use `packer::bundle_prod()`. You may also consider `watch()` which watches for changes in the `srcjs` and rebuilds if necessary, equivalent to `⁠npm run watch⁠`.
+
+You may as well bundle for `dev` using `packer::bundle_dev()` when in
+developer mode and when ready for production use
+`packer::bundle_prod()`. You may also consider `watch()` which watches
+for changes in the `srcjs` and rebuilds if necessary, equivalent to
+`⁠npm run watch⁠`.
 
 ### Debugging steps
-1. Once you run a function, for instance, `cheetah(iris)`, open the viewer on a web browser window (preferably Chrome as it is used to illustrate the action in this step). Note! Other browser pages may differ.
-2. Right-click on the widget and navigate to the "inspect" option on the drop-down menu
-![widget opened on the browser](inst/images/image1.png)
-3. At the top, where the tabs are displayed, navigate to the "Sources" tab. Open from the sidepanel "cheetahr/srcjs/widgets/cheetah.js" script
-![Inspector tabs are opened](inst/images/image2.png)
-4. Once the "cheetah.js" is opened on the main panel. You can set a breakpoint on any line number of the script and reload the page.
-![The breakpoint is shown](inst/images/image3.png)
+
+1.  Once you run a function, for instance, `cheetah(iris)`, open the
+    viewer on a web browser window (preferably Chrome as it is used to
+    illustrate the action in this step). Note! Other browser pages may
+    differ.
+2.  Right-click on the widget and navigate to the “inspect” option on
+    the drop-down menu ![widget opened on the
+    browser](man/figures/image1.png)
+3.  At the top, where the tabs are displayed, navigate to the “Sources”
+    tab. Open from the sidepanel “cheetahr/srcjs/widgets/cheetah.js”
+    script ![Inspector tabs are opened](man/figures/image2.png)
+4.  Once the “cheetah.js” is opened on the main panel. You can set a
+    breakpoint on any line number of the script and reload the page.
+    ![The breakpoint is shown](man/figures/image3.png)
 
 ## Acknowledgments
-This package is built on top of the amazing [Cheetah Grid](https://github.com/future-architect/cheetah-grid) JavaScript library.
+
+This package is built on top of the amazing [Cheetah
+Grid](https://github.com/future-architect/cheetah-grid) JavaScript
+library.

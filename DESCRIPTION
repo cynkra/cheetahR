@@ -17,6 +17,8 @@ Imports:
 Suggests:
     testthat (>= 3.0.0),
     utils,
-    shiny
+    shiny,
+    quarto,
+    knitr
 Config/testthat/edition: 3
-
+VignetteBuilder: quarto

@@ -2,6 +2,7 @@
 
 export(cheetah)
 export(cheetahOutput)
+export(column_def)
 export(rendercheetah)
 import(htmlwidgets)
 import(jsonlite)
