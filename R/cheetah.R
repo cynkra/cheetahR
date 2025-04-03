@@ -24,28 +24,18 @@ cheetah <- function(
   rownames = TRUE
 ) {
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
-  if (rownames && is.character(attr(data, "row.names"))) {
-    rowname_var <- if ("rownames" %in% names(columns)) {
-      if (is.null(columns$rownames$caption)) {
-        columns$rownames$caption <- " "
-      }
-      "rownames"
-    } else {
-      " "
-    }
+  processed_rn <- process_rownames(data, columns, rownames)
 
-    data_rn <- tibble::rownames_to_column(data, var = rowname_var)
-  } else {
-    data_rn <- data
-  }
+  data <- processed_rn$data
+  columns <- processed_rn$columns
 
   stopifnot(
     is.null(columns) |
-      is_named_list(columns) & names(columns) %in% colnames(data_rn)
+      is_named_list(columns) & names(columns) %in% colnames(data)
   )
   columns <- toJSON(add_field_to_list(columns), auto_unbox = TRUE)
 
-  data_json <- toJSON(data_rn, dataframe = "rows")
+  data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
   x = list(data = data_json, columns = columns)
 
