@@ -6,7 +6,7 @@ ui <- page_fluid(cheetahOutput("grid"))
 
 # Define server logic
 server <- function(input, output) {
-  output$grid <- rendercheetah({
+  output$grid <- renderCheetah({
     cheetah(data = mtcars)
   })
 }
