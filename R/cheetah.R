@@ -25,11 +25,16 @@ cheetah <- function(
 ) {
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
   if (rownames && is.character(attr(data, "row.names"))) {
-    if ("rownames" %in% names(columns)) {
-      data_rn <- tibble::rownames_to_column(data, var = "rownames")
+    rowname_var <- if ("rownames" %in% names(columns)) {
+      if (is.null(columns$rownames$caption)) {
+        columns$rownames$caption <- " "
+      }
+      "rownames"
     } else {
-      data_rn <- tibble::rownames_to_column(data, var = " ")
+      " "
     }
+
+    data_rn <- tibble::rownames_to_column(data, var = rowname_var)
   } else {
     data_rn <- data
   }
