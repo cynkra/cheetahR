@@ -73,11 +73,23 @@ columns individually.</p>
 
 
 <dt id="arg-column-type">column_type<a class="anchor" aria-label="anchor" href="#arg-column-type"></a></dt>
-<dd><p>Column type. TBD</p></dd>
+<dd><p>Column type. There are 6 possible options:</p><ul><li><p><code>"text"</code> for text columns.</p></li>
+<li><p><code>"number"</code> for numeric columns.</p></li>
+<li><p><code>"check"</code> for check columns.</p></li>
+<li><p><code>"image"</code> for image columns.</p></li>
+<li><p><code>"radio"</code> for radio columns.</p></li>
+<li><p><code>"multilinetext"</code> for multiline text in columns.</p></li>
+</ul></dd>
 
 
 <dt id="arg-action">action<a class="anchor" aria-label="anchor" href="#arg-action"></a></dt>
-<dd><p>Column action. TBD</p></dd>
+<dd><p>The action property defines column actions. Select
+the appropriate Action class for the column type. For instance,
+if the column type is <code>"text"</code>, the action can be <code>"input"</code>.
+There are 3 supported actions:</p><ul><li><p><code>"input"</code> for input action columns.</p></li>
+<li><p><code>"check"</code> for check action columns.</p></li>
+<li><p><code>"radio"</code> for radio action columns.</p></li>
+</ul></dd>
 
 
 <dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
