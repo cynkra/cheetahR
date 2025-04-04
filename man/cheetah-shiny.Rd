@@ -3,12 +3,12 @@
 \name{cheetah-shiny}
 \alias{cheetah-shiny}
 \alias{cheetahOutput}
-\alias{rendercheetah}
+\alias{renderCheetah}
 \title{Shiny bindings for cheetah}
 \usage{
 cheetahOutput(outputId, width = "100\%", height = "400px")
 
-rendercheetah(expr, env = parent.frame(), quoted = FALSE)
+renderCheetah(expr, env = parent.frame(), quoted = FALSE)
 }
 \arguments{
 \item{outputId}{output variable to read from}

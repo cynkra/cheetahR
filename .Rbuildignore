@@ -11,3 +11,9 @@
 ^app\.R$
 ^script$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^README\.Rmd$
+^vignettes/*_files$
+^vignettes/\.quarto

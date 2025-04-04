@@ -2,7 +2,8 @@
 
 export(cheetah)
 export(cheetahOutput)
-export(rendercheetah)
+export(column_def)
+export(renderCheetah)
 import(htmlwidgets)
 import(jsonlite)
 import(tibble)

@@ -79,7 +79,7 @@ cheetahOutput <- function(outputId, width = '100%', height = '400px') {
 
 #' @rdname cheetah-shiny
 #' @export
-rendercheetah <- function(expr, env = parent.frame(), quoted = FALSE) {
+renderCheetah <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) {
     expr <- substitute(expr)
   } # force quoted
