@@ -51,3 +51,45 @@ process_rownames <- function(data, columns, rownames = TRUE) {
     }
   list(data = data, columns = columns)
 }
+
+column_style_check <- function(columns) {
+  lapply(columns, function(x) {
+    if ("style" %in% names(x) && !is.null(x$style)) {
+      stopifnot(
+        "The style attribute expects a list" = is.list(x$style) &&
+          !is.null(names(x$style))
+      )
+    }
+  })
+  invisible()
+}
+
+check_column_type <- function(x) {
+  av_options <-
+    c("text", "check", "number", "radio", "image", "multilinetext")
+
+  if (!is.null(x) && !(x %in% av_options)) {
+    msg <- sprintf(
+      "Invalid `column_type`: '%s'.\n\nExpected one of the following options:\n  - %s",
+      x,
+      paste(av_options, collapse = "\n  - ")
+    )
+    stop(msg)
+  }
+}
+
+update_col_list_with_classes <- function(data, col_list) {
+  col_classes <- lapply(data, class)
+
+  for (col_name in names(col_classes)) {
+    if (is.null(col_list[[col_name]]$columnType)) {
+      if (col_classes[[col_name]] == "numeric") {
+        col_list[[col_name]]$columnType <- "number"
+      } else {
+        col_list[[col_name]]$columnType <- "text"
+      }
+    }
+  }
+
+  col_list
+}
