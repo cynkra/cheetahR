@@ -7,8 +7,24 @@
 #' @param width Column width.
 #' @param min_width Column minimal width.
 #' @param max_width Column max width.
-#' @param column_type Column type. TBD
-#' @param action Column action. TBD
+#' @param column_type Column type. There are 6 possible options:
+#' \itemize{
+#'   \item \code{"text"} for text columns.
+#'   \item \code{"number"} for numeric columns.
+#'   \item \code{"check"} for check columns.
+#'   \item \code{"image"} for image columns.
+#'   \item \code{"radio"} for radio columns.
+#'   \item \code{"multilinetext"} for multiline text in columns.
+#' }
+#' @param action The action property defines column actions. Select
+#' the appropriate Action class for the column type. For instance,
+#' if the column type is \code{"text"}, the action can be \code{"input"}.
+#' There are 3 supported actions:
+#' \itemize{
+#'   \item \code{"input"} for input action columns.
+#'   \item \code{"check"} for check action columns.
+#'   \item \code{"radio"} for radio action columns.
+#' }
 #' @param style Column style.
 #'
 #' @export
@@ -22,6 +38,7 @@ column_def <- function(
   action = NULL,
   style = NULL
 ) {
+  check_column_type(column_type)
   list(
     caption = name,
     width = width,
