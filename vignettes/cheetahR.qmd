@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(cheetahR)
+library(dplyr)
 ```
 
 ## Your first table
@@ -32,8 +33,61 @@ cheetah(iris)
 cheetah(
   iris,
   columns = list(
-    Sepal.Length = column_def(name = "Sepal_Length"),
-    Sepal.Width = column_def(name = "Sepal_Width", width = 100)
+    Sepal.Length = column_def(name = "Sepal_Length", width = 120),
+    Sepal.Width = column_def(name = "Sepal_Width", width = 120),
+    Petal.Length = column_def(name = "Petal_Length", width = 120),
+    Petal.Width = column_def(name = "Petal_Width", width = 120),
+    Species = column_def(name = "Species")
   )
 )
+```
+
+## Customize `rownames`
+
+The default for the row names column is `TRUE` if present in the data; however, to modify it, include a column definition with "rownames" as the designated column name.
+
+```{r}
+# Example of customizing rownames with color and width
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(width = 150, style = list(color = "red"))
+  )
+)
+```
+
+## Defining the column types
+
+The `column_type` parameter in `column_def()` allows you to specify different types of columns. There are 6 possible options:
+
+- `"text"`: For text columns
+- `"number"`: For numeric columns
+- `"check"`: For checkbox columns
+- `"image"`: For image columns
+- `"radio"`: For radio button columns
+- `"multilinetext"`: For multiline text columns
+
+The `column_type` parameter is optional. If it is not specified, the column type will be inferred from the data type.
+
+```{r}
+# Using checkbox column type to indicate NA values
+head(airquality, 10) %>%
+  mutate(
+    has_na = if_any(everything(), is.na),
+    has_na = ifelse(has_na, "true", "false"),
+    .before = 1
+  ) %>%
+  cheetah(
+    columns = list(
+      has_na = column_def(
+        name = "Contains NA",
+        column_type = "check",
+        style = list(
+          uncheckBgColor = "#FDD",
+          checkBgColor = "rgb(255, 73, 72)",
+          borderColor = "red"
+        )
+      )
+    )
+  )
 ```
