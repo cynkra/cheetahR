@@ -12,11 +12,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(dplyr)
 ```
 
 ```{r setup}
 library(cheetahR)
-library(dplyr)
 ```
 
 ## Your first table
