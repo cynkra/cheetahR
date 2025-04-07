@@ -19,6 +19,7 @@ Suggests:
     utils,
     shiny,
     quarto,
-    knitr
+    knitr,
+    dplyr
 Config/testthat/edition: 3
 VignetteBuilder: quarto
