@@ -35,8 +35,8 @@ cheetah <- function(
   )
 
   columns <-
-    update_col_list_with_classes(data, columns) |>
-      add_field_to_list() |>
+    update_col_list_with_classes(data, columns) %>%
+      add_field_to_list() %>%
       toJSON(auto_unbox = TRUE)
 
   data_json <- toJSON(data, dataframe = "rows")
