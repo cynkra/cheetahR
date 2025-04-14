@@ -66,7 +66,9 @@ column_style_check <- function(columns) {
 
 check_column_type <- function(x) {
   av_options <-
-    c("text", "check", "number", "radio", "image", "multilinetext")
+    c("text", "check", "number",
+      "radio", "image", "multilinetext",
+      "menu")
 
   if (!is.null(x) && !(x %in% av_options)) {
     msg <- sprintf(
@@ -92,4 +94,19 @@ update_col_list_with_classes <- function(data, col_list) {
   }
 
   col_list
+}
+
+check_action_type <- function(action = NULL, column_type = NULL) {
+  if (is.null(action)) return(invisible())
+
+  valid_actions <- c("input", "check", "radio", "inline_menu")
+  if (!action %in% valid_actions) {
+    stop("Invalid action type. Must be one of: ",
+         paste(valid_actions, collapse = ", "))
+  }
+
+  # Validate action-column type compatibility
+  if (action == "inline_menu" && any(is.null(column_type), column_type != "menu")) {
+    stop("'inline_menu' action can only be used with 'menu' column type")
+  }
 }
