@@ -7,24 +7,26 @@
 #' @param width Column width.
 #' @param min_width Column minimal width.
 #' @param max_width Column max width.
-#' @param column_type Column type. There are 6 possible options:
+#' @param column_type Column type. There are 7 possible options:
 #' \itemize{
 #'   \item \code{"text"} for text columns.
 #'   \item \code{"number"} for numeric columns.
 #'   \item \code{"check"} for check columns.
 #'   \item \code{"image"} for image columns.
 #'   \item \code{"radio"} for radio columns.
-#'   \item \code{"multilinetext"} for multiline text in columns.
+#'   \item \code{"multilinetext"} for multiline text columns.
+#'   \item \code{"menu"} for menu selection columns.
 #' }
 #' @param action The action property defines column actions. Select
-#' the appropriate Action class for the column type. For instance,
-#' if the column type is \code{"text"}, the action can be \code{"input"}.
-#' There are 3 supported actions:
+#' the appropriate Action class for the column type.
 #' \itemize{
 #'   \item \code{"input"} for input action columns.
 #'   \item \code{"check"} for check action columns.
 #'   \item \code{"radio"} for radio action columns.
+#'   \item \code{"inline_menu"} for menu selection columns.
 #' }
+#' @param menu_options A list of menu options when using \code{column_type = "menu"}.
+#' Each option should be a list with \code{value} and \code{label} elements.
 #' @param style Column style.
 #'
 #' @export
@@ -36,16 +38,33 @@ column_def <- function(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
+  menu_options = NULL,
   style = NULL
 ) {
   check_column_type(column_type)
+  check_action_type(action, column_type)
+
+  # FIXME: automate menu_options if a column is a factor type
+  if (all(!is.null(column_type), column_type == "menu") &&  is.null(menu_options)) {
+    stop("menu_options must be provided when column_type is 'menu'")
+  }
+
   list(
     caption = name,
     width = width,
     minWidth = min_width,
     maxWidth = max_width,
     columnType = column_type,
-    action = action,
+    action = if (!is.null(action)) {
+      if (action == "inline_menu") {
+        list(
+          type = action,
+          options = menu_options
+        )
+      } else {
+        action
+      }
+    },
     style = style
   )
 }
