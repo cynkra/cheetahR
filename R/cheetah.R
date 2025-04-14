@@ -10,6 +10,14 @@
 #' @param elementId The element ID for the widget
 #' @param rownames Logical. Whether to show rownames. Defaults to TRUE.
 #'
+#' @return An HTML widget object of class 'cheetah' that can be:
+#'   \itemize{
+#'     \item Rendered in R Markdown documents
+#'     \item Used in Shiny applications
+#'     \item Displayed in R interactive sessions
+#'   }
+#'   The widget renders as an HTML table with all specified customizations.
+#'
 #' @import htmlwidgets
 #' @import jsonlite
 #' @import tibble
@@ -67,6 +75,9 @@ cheetah <- function(
 #' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
+#'
+#' @return \code{cheetahOutput} returns a Shiny output function that can be used in the UI definition.
+#'   \code{renderCheetah} returns a Shiny render function that can be used in the server definition.
 #'
 #' @name cheetah-shiny
 #'
