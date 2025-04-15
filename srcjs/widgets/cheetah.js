@@ -43,7 +43,7 @@ HTMLWidgets.widget({
         });
 
         // Search feature
-        if (x.search) {
+        if (x.search !== 'disabled') {
           const filterDataSource = new cheetahGrid
             .data
             .FilterDataSource(
@@ -61,7 +61,19 @@ HTMLWidgets.widget({
               ? (record) => {
                 // filtering method
                 for (const k in record) {
-                  if (`${record[k]}`.indexOf(filterValue) >= 0) {
+                  let testCond;
+                  switch (x.search) {
+                    case 'contains':
+                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;;
+                      break;
+                    case 'exact':
+                      let r = new RegExp(`^${filterValue}$`);
+                      testCond = r.test(`${record[k]}`);
+                      break;
+                    default:
+                      console.log(`${x.search} value not implemented yet.`);
+                  }
+                  if (testCond) {
                     return true;
                   }
                 }

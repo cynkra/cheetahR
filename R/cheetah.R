@@ -10,6 +10,8 @@
 #' @param elementId The element ID for the widget
 #' @param rownames Logical. Whether to show rownames. Defaults to TRUE.
 #' @param search Whether to enable a search field on top of the table.
+#' Default to `disabled`. Use `exact` for exact matching
+#' or `contains` to get larger matches.
 #'
 #' @import htmlwidgets
 #' @import jsonlite
@@ -23,8 +25,9 @@ cheetah <- function(
   height = NULL,
   elementId = NULL,
   rownames = TRUE,
-  search = FALSE
+  search = c("disabled", "exact", "contains")
 ) {
+  search <- match.arg(search)
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
   processed_rn <- process_rownames(data, columns, rownames)
 

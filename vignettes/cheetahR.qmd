@@ -17,6 +17,7 @@ library(dplyr)
 
 ```{r setup}
 library(cheetahR)
+library(palmerpenguins)
 ```
 
 ## Your first table
@@ -90,4 +91,12 @@ head(airquality, 10) %>%
       )
     )
   )
+```
+
+## Filtering data
+
+You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
+
+```{r}
+cheetah(penguins, search = "contains")
 ```

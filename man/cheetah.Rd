@@ -11,7 +11,7 @@ cheetah(
   height = NULL,
   elementId = NULL,
   rownames = TRUE,
-  search = FALSE
+  search = c("disabled", "exact", "contains")
 )
 }
 \arguments{
@@ -28,7 +28,9 @@ cheetah(
 
 \item{rownames}{Logical. Whether to show rownames. Defaults to TRUE.}
 
-\item{search}{Whether to enable a search field on top of the table.}
+\item{search}{Whether to enable a search field on top of the table.
+Default to \code{disabled}. Use \code{exact} for exact matching
+or \code{contains} to get larger matches.}
 }
 \description{
 Creates a high-performance table widget using Cheetah Grid.
