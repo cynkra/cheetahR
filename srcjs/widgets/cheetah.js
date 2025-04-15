@@ -44,22 +44,25 @@ HTMLWidgets.widget({
           // frozenColCount: 1,
         });
 
-        const {
-          CLICK_CELL,
-          CHANGED_VALUE,
-        } = cheetahGrid.ListGrid.EVENT_TYPE;
+        // Only is Shiny exists
+        if (HTMLWidgets.shinyMode) {
+          const {
+            CLICK_CELL,
+            CHANGED_VALUE,
+          } = cheetahGrid.ListGrid.EVENT_TYPE;
 
-        grid.listen(
-          CLICK_CELL, (...args) => {
-            Shiny.setInputValue(`${id}_click_cell`, args);
-          }
-        );
+          grid.listen(
+            CLICK_CELL, (...args) => {
+              Shiny.setInputValue(`${id}_click_cell`, args);
+            }
+          );
 
-        grid.listen(
-          CHANGED_VALUE, (...args) => {
-            Shiny.setInputValue(`${id}_changed_value`, args);
-          }
-        );
+          grid.listen(
+            CHANGED_VALUE, (...args) => {
+              Shiny.setInputValue(`${id}_changed_value`, args);
+            }
+          );
+        }
       },
 
       resize: function (width, height) {
