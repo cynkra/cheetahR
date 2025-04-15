@@ -10,7 +10,8 @@ cheetah(
   width = NULL,
   height = NULL,
   elementId = NULL,
-  rownames = TRUE
+  rownames = TRUE,
+  search = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ cheetah(
 \item{elementId}{The element ID for the widget}
 
 \item{rownames}{Logical. Whether to show rownames. Defaults to TRUE.}
+
+\item{search}{Whether to enable a search field on top of the table.}
 }
 \description{
 Creates a high-performance table widget using Cheetah Grid.

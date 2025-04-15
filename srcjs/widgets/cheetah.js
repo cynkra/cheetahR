@@ -15,6 +15,11 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function (x, id = el.id) {
+        if (x.search) {
+          $(`#${el.id}`).prepend(
+            `<label>Filter:</label><input class="${el.id}-filter-input"/>`
+          )
+        }
         let columns;
         const header = Object.keys(x.data[0])
         const defaultCol = header.map((key) => {
