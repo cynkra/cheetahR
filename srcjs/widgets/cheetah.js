@@ -15,11 +15,6 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function (x, id = el.id) {
-        if (x.search) {
-          $(`#${el.id}`).prepend(
-            `<label>Filter:</label><input class="${el.id}-filter-input"/>`
-          )
-        }
         let columns;
         const header = Object.keys(x.data[0])
         const defaultCol = header.map((key) => {
@@ -43,11 +38,43 @@ HTMLWidgets.widget({
         const grid = new cheetahGrid.ListGrid({
           parentElement: document.getElementById(id),
           header: columns,
-          // Array data to be displayed on the grid
-          records: x.data,
           // Column fixed position
           // frozenColCount: 1,
         });
+
+        // Search feature
+        if (x.search) {
+          const filterDataSource = new cheetahGrid
+            .data
+            .FilterDataSource(
+              cheetahGrid.data.DataSource.ofArray(x.data)
+            );
+          grid.dataSource = filterDataSource;
+
+          $(`#${el.id}`).prepend(
+            `<label>Filter:</label><input id="${el.id}-filter-input" style="margin: 10px;"/>`
+          )
+
+          $(`#${el.id}-filter-input`).on('input', (e) => {
+            const filterValue = $(e.currentTarget).val();
+            filterDataSource.filter = filterValue
+              ? (record) => {
+                // filtering method
+                for (const k in record) {
+                  if (`${record[k]}`.indexOf(filterValue) >= 0) {
+                    return true;
+                  }
+                }
+                return false;
+              }
+              : null;
+            grid.invalidate();
+          })
+        } else {
+          // Array data to be displayed on the grid
+          grid.records = x.data;
+        }
+
 
         const {
           CLICK_CELL,
