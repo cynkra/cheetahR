@@ -35,6 +35,20 @@ HTMLWidgets.widget({
           columns = defaultCol
         }
 
+        // Handle complex col types
+        columns = columns.map((col) => {
+          console.log(col);
+          if (col.columnType === 'menu') {
+            col.columnType = new cheetahGrid.columns.type.MenuColumn({
+              options: col['r_choices'],
+            });
+            col.action = new cheetahGrid.columns.action.InlineMenuEditor({
+              options: col['r_choices'],
+            })
+          }
+          return col;
+        })
+
         const grid = new cheetahGrid.ListGrid({
           parentElement: document.getElementById(id),
           header: columns,

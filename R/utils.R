@@ -66,7 +66,7 @@ column_style_check <- function(columns) {
 
 check_column_type <- function(x) {
   av_options <-
-    c("text", "check", "number", "radio", "image", "multilinetext")
+    c("text", "check", "number", "radio", "image", "multilinetext", "menu")
 
   if (!is.null(x) && !(x %in% av_options)) {
     msg <- sprintf(
@@ -85,6 +85,16 @@ update_col_list_with_classes <- function(data, col_list) {
     if (is.null(col_list[[col_name]]$columnType)) {
       if (col_classes[[col_name]] == "numeric") {
         col_list[[col_name]]$columnType <- "number"
+      } else if (col_classes[[col_name]] == "factor") {
+        col_list[[col_name]]$columnType <- "menu"
+        # Not super pretty (find a name that does not match the cheetah JS API)
+        # This is to recover the possible choices for a factor column.
+        col_list[[col_name]]$r_choices <- lapply(
+          unique(data[[col_name]]),
+          \(val) {
+            list(value = val, label = val)
+          }
+        )
       } else {
         col_list[[col_name]]$columnType <- "text"
       }
