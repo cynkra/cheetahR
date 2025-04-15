@@ -34,10 +34,8 @@ cheetah <- function(
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
 
-  columns <-
-    update_col_list_with_classes(data, columns) %>%
-      add_field_to_list() %>%
-      toJSON(auto_unbox = TRUE)
+  columns <- update_col_list_with_classes(data, columns) %>%
+    add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
