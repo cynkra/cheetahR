@@ -7,7 +7,8 @@
 #' @param width Column width.
 #' @param min_width Column minimal width.
 #' @param max_width Column max width.
-#' @param column_type Column type. There are 7 possible options:
+#' @param column_type Column type. By default, the column type is inferred from the data type of the column.
+#' There are 7 possible options:
 #' \itemize{
 #'   \item \code{"text"} for text columns.
 #'   \item \code{"number"} for numeric columns.
@@ -15,7 +16,9 @@
 #'   \item \code{"image"} for image columns.
 #'   \item \code{"radio"} for radio columns.
 #'   \item \code{"multilinetext"} for multiline text columns.
-#'   \item \code{"menu"} for menu selection columns.
+#'   \item \code{"menu"} for menu selection columns. If \code{column_type == "menu"},
+#'    action parameter must be set to "inline_menu" and menu_options must be provided.
+#'    Note: Works efficiently only in shiny.
 #' }
 #' @param action The action property defines column actions. Select
 #' the appropriate Action class for the column type.
@@ -27,6 +30,9 @@
 #' }
 #' @param menu_options A list of menu options when using \code{column_type = "menu"}.
 #' Each option should be a list with \code{value} and \code{label} elements.
+#' The menu options must be a list of lists, each containing a \code{value}
+#' and \code{label} element.
+#' The \code{label} element is the label that will be displayed in the menu.
 #' @param style Column style.
 #'
 #' @export

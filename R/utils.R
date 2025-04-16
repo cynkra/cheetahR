@@ -86,15 +86,17 @@ update_col_list_with_classes <- function(data, col_list) {
       if (col_classes[[col_name]] == "numeric") {
         col_list[[col_name]]$columnType <- "number"
       } else if (col_classes[[col_name]] == "factor") {
-        col_list[[col_name]]$columnType <- "menu"
         # Not super pretty (find a name that does not match the cheetah JS API)
         # This is to recover the possible choices for a factor column.
-        col_list[[col_name]]$r_choices <- lapply(
+        menu_opt <- lapply(
           unique(data[[col_name]]),
           \(val) {
             list(value = val, label = val)
           }
         )
+        col_list[[col_name]]$columnType <- "menu"
+        col_list[[col_name]]$action <-
+          list(type = "inline_menu", options = menu_opt)
       } else {
         col_list[[col_name]]$columnType <- "text"
       }
