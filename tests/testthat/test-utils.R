@@ -10,8 +10,17 @@ test_that("test utils", {
       "maxWidth",
       "columnType",
       "action",
-      "style"
+      "style",
+      "message"
     )
+  )
+
+  expect_snapshot(
+    error = TRUE,
+    {
+      # Message must be wrapped by JS
+      column_def(message = "test")
+    }
   )
 })
 

@@ -91,3 +91,30 @@ head(airquality, 10) %>%
     )
   )
 ```
+
+## Cell messages
+
+You can define __cell messages__ by passing a JS function wrapped within `htmlwidget::JS()`. This function takes a single
+parameter `rec` which refers to data row. It must return an object with 2 properties:
+
+- `type`: the message type. Valid types are `"info"`, `"warning"` and `"error"`.
+- `message`: the message content. As shown below, you can use a [__ternary operator__](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator) to check whether a condition is respected, for instance `rec.Species === 'setosa'` check if the recorded specie is `"setosa"`. Since `rec` refers to an entire data row, you can also target multiple columns in your check logic.
+
+```{r}
+cheetah(
+  iris,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = htmlwidgets::JS(
+        "function(rec) {
+          return {
+            type: 'error',
+            message: rec.Species === 'setosa' ? 'Invalid specie type.' : null,
+          }
+        }"
+      )
+    )
+  )
+)
+```
