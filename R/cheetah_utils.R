@@ -49,9 +49,17 @@ column_def <- function(
 ) {
   check_column_type(column_type)
   check_action_type(action, column_type)
+  in_shiny <- shiny::isRunning()
 
-  # FIXME: automate menu_options if a column is a factor type
-  if (all(!is.null(column_type), column_type == "menu") &&  is.null(menu_options)) {
+  if (all(!is.null(column_type), column_type == "menu", !in_shiny)) {
+    warning(
+      "Dropdown menu action does not work properly outside a shiny environment"
+    )
+  }
+
+  if (
+    all(!is.null(column_type), column_type == "menu", is.null(menu_options))
+  ) {
     stop("menu_options must be provided when column_type is 'menu'")
   }
 
