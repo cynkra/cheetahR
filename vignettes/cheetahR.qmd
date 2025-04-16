@@ -66,8 +66,9 @@ The `column_type` parameter in `column_def()` allows you to specify different ty
 - `"image"`: For image columns
 - `"radio"`: For radio button columns
 - `"multilinetext"`: For multiline text columns
+- `"menu"`: For dropdown menu selection columns
 
-The `column_type` parameter is optional. If it is not specified, the column type will be inferred from the data type.
+If `column_type` parameter is optional. If it is not specified, the column type will be inferred from the data type.
 
 ```{r}
 # Using checkbox column type to indicate NA values
