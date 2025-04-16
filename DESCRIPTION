@@ -6,8 +6,7 @@ Authors@R: c(
     person("Olajoke", "Oladipo", , "olajoke@cynkra.com", role = c("aut", "cre")),
     person(given = "David", family = "Granjon", role = c("aut"), 
            email = "david@cynkra.com"),
-    person("cynkra GmbH", , , "mail@cynkra.com", role = "fnd",
-           comment = c(ROR = "0335t7e62"))
+    person("cynkra GmbH", email = "mail@cynkra.com", role = "fnd")
     )
 Description: An R interface to 'Cheetah Grid', a high-performance JavaScript table widget. 
     'cheetahR' allows users to render millions of rows in just a few milliseconds, 
