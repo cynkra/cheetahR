@@ -10,7 +10,8 @@ test_that("test utils", {
       "maxWidth",
       "columnType",
       "action",
-      "style"
+      "style",
+      "sort"
     )
   )
 })
