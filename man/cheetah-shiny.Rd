@@ -24,6 +24,10 @@ string and have \code{'px'} appended.}
 \item{quoted}{Is \code{expr} a quoted expression (with \code{quote()})? This
 is useful if you want to save an expression in a variable.}
 }
+\value{
+\code{cheetahOutput} returns a Shiny output function that can be used in the UI definition.
+\code{renderCheetah} returns a Shiny render function that can be used in the server definition.
+}
 \description{
 Output and render functions for using cheetah within Shiny
 applications and interactive Rmd documents.

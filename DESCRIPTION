@@ -1,12 +1,19 @@
 Package: cheetahR
-Title: High Performance Tables Using Cheetah Grid
+Title: High Performance Tables Using 'Cheetah Grid'
 Version: 0.1.0
 License: GPL (>= 3)
 Authors@R: c(
-    person("Olajoke", "Oladipo", , "olajoke@cynkra.com", role = c("aut", "cre"))
+    person("Olajoke", "Oladipo", , "olajoke@cynkra.com", role = c("aut", "cre")),
+    person(given = "David", family = "Granjon", role = c("aut"), 
+           email = "david@cynkra.com"),
+    person("cynkra GmbH", email = "mail@cynkra.com", role = "fnd")
     )
-Description: A high-performance table widget for R using Cheetah Grid. Designed for 
-    speed and efficiency, cheetahR allows rendering millions of rows in milliseconds.
+Description: An R interface to 'Cheetah Grid', a high-performance JavaScript table widget. 
+    'cheetahR' allows users to render millions of rows in just a few milliseconds, 
+    making it an excellent alternative to other R table widgets. The package wraps 
+    the 'Cheetah Grid' JavaScript functions and makes them readily available for R users.
+    The underlying grid implementation is based on 'Cheetah Grid'
+    <https://github.com/future-architect/cheetah-grid>.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -26,6 +26,8 @@
 #'   \item \code{"radio"} for radio action columns.
 #' }
 #' @param style Column style.
+#' @param sort Whether to sort the column. Default to FALSE. May also be
+#' a JS callback to create custom logic (does not work yet).
 #'
 #' @export
 #' @return A list of column options to pass to the JavaScript API.
@@ -36,7 +38,8 @@ column_def <- function(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
-  style = NULL
+  style = NULL,
+  sort = FALSE
 ) {
   check_column_type(column_type)
   list(
@@ -46,6 +49,7 @@ column_def <- function(
     maxWidth = max_width,
     columnType = column_type,
     action = action,
-    style = style
+    style = style,
+    sort = sort
   )
 }

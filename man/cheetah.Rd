@@ -32,6 +32,15 @@ cheetah(
 Default to \code{disabled}. Use \code{exact} for exact matching
 or \code{contains} to get larger matches.}
 }
+\value{
+An HTML widget object of class 'cheetah' that can be:
+\itemize{
+\item Rendered in R Markdown documents
+\item Used in Shiny applications
+\item Displayed in R interactive sessions
+}
+The widget renders as an HTML table with all specified customizations.
+}
 \description{
 Creates a high-performance table widget using Cheetah Grid.
 }

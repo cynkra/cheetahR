@@ -11,7 +11,8 @@ column_def(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
-  style = NULL
+  style = NULL,
+  sort = FALSE
 )
 }
 \arguments{
@@ -44,6 +45,9 @@ There are 3 supported actions:
 }}
 
 \item{style}{Column style.}
+
+\item{sort}{Whether to sort the column. Default to FALSE. May also be
+a JS callback to create custom logic (does not work yet).}
 }
 \value{
 A list of column options to pass to the JavaScript API.

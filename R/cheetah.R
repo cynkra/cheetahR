@@ -13,6 +13,14 @@
 #' Default to `disabled`. Use `exact` for exact matching
 #' or `contains` to get larger matches.
 #'
+#' @return An HTML widget object of class 'cheetah' that can be:
+#'   \itemize{
+#'     \item Rendered in R Markdown documents
+#'     \item Used in Shiny applications
+#'     \item Displayed in R interactive sessions
+#'   }
+#'   The widget renders as an HTML table with all specified customizations.
+#'
 #' @import htmlwidgets
 #' @import jsonlite
 #' @import tibble
@@ -39,10 +47,8 @@ cheetah <- function(
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
 
-  columns <-
-    update_col_list_with_classes(data, columns) %>%
-    add_field_to_list() %>%
-    toJSON(auto_unbox = TRUE)
+  columns <- update_col_list_with_classes(data, columns) %>%
+    add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
@@ -72,6 +78,9 @@ cheetah <- function(
 #' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
+#'
+#' @return \code{cheetahOutput} returns a Shiny output function that can be used in the UI definition.
+#'   \code{renderCheetah} returns a Shiny render function that can be used in the server definition.
 #'
 #' @name cheetah-shiny
 #'
