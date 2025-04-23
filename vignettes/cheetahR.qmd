@@ -113,7 +113,7 @@ cheetah(
             type: 'error',
             message: rec.Species === 'setosa' ? 'Invalid specie type.' : null,
           }
-        "
+        }"
       )
     )
   )
@@ -127,6 +127,8 @@ You can filter data by setting `search` to either `exact` or `contains` when you
 ```{r}
 cheetah(penguins, search = "contains")
 ```
+
+<br/>
 
 ## Sortable columns
 
@@ -155,10 +157,8 @@ cheetah(
     rownames = column_def(
       width = 150,
       sort = htmlwidgets::JS(
-        "sort(order, col, grid) {
-          console.log(order);
-          console.log(col);
-          console.log(grid);
+        "function(order, col, grid) {
+          // your logic
         }"
       )
     )
