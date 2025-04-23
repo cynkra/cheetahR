@@ -12,7 +12,7 @@ column_def(
   column_type = NULL,
   action = NULL,
   style = NULL,
-  message = NULL
+  message = NULL,
   sort = FALSE
 )
 }
@@ -53,6 +53,7 @@ type (\code{"info"}, \code{"warning"}, \code{"error"}) and the \code{message} th
 The latter can leverage a JavaScript ternary operator involving \verb{rec.<COLNAME>} (\code{COLNAME} being the name
 of the column for which we define the message) to check whether the predicate function is TRUE.
 See details for example of usage.}
+
 \item{sort}{Whether to sort the column. Default to FALSE. May also be
 a JS callback to create custom logic (does not work yet).}
 }
