@@ -76,7 +76,7 @@ column_def <- function(
     columnType = column_type,
     action = action,
     style = style,
-    message = message
+    message = message,
     sort = sort
   )
 }
