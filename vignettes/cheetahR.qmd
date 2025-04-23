@@ -12,11 +12,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(dplyr)
 ```
 
 ```{r setup}
 library(cheetahR)
+library(dplyr)
 ```
 
 ## Your first table
@@ -90,4 +90,42 @@ head(airquality, 10) %>%
       )
     )
   )
+```
+
+## Sortable columns
+
+To make a column sortable, you can pass `sort = TRUE` to the `column_def()` function:
+
+```{r}
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(
+      width = 150,
+      sort = TRUE
+    )
+  )
+)
+```
+
+### Coming soon (TBD)
+
+If you want finer control over the sorting logic and provide your own, you can pass a `htmlwidgets::JS` callback instead:
+
+```r
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(
+      width = 150,
+      sort = htmlwidgets::JS(
+        "sort(order, col, grid) {
+          console.log(order);
+          console.log(col);
+          console.log(grid);
+        }"
+      )
+    )
+  )
+)
 ```
