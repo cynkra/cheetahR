@@ -62,7 +62,7 @@ column_def <- function(
   column_type = NULL,
   action = NULL,
   style = NULL,
-  message = NULL
+  message = NULL,
   sort = FALSE
 ) {
   check_column_type(column_type)
