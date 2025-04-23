@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(cheetahR)
+library(palmerpenguins)
 library(dplyr)
 ```
 
@@ -92,6 +93,14 @@ head(airquality, 10) %>%
   )
 ```
 
+## Filtering data
+
+You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
+
+```{r}
+cheetah(penguins, search = "contains")
+```
+
 ## Sortable columns
 
 To make a column sortable, you can pass `sort = TRUE` to the `column_def()` function:
@@ -112,7 +121,7 @@ cheetah(
 
 If you want finer control over the sorting logic and provide your own, you can pass a `htmlwidgets::JS` callback instead:
 
-```r
+```{r}
 cheetah(
   mtcars,
   columns = list(
