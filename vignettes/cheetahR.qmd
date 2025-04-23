@@ -12,11 +12,12 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(dplyr)
 ```
 
 ```{r setup}
 library(cheetahR)
+library(palmerpenguins)
+library(dplyr)
 ```
 
 ## Your first table
@@ -112,6 +113,47 @@ cheetah(
             type: 'error',
             message: rec.Species === 'setosa' ? 'Invalid specie type.' : null,
           }
+```
+
+## Filtering data
+
+You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
+
+```{r}
+cheetah(penguins, search = "contains")
+```
+
+## Sortable columns
+
+To make a column sortable, you can pass `sort = TRUE` to the `column_def()` function:
+
+```{r}
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(
+      width = 150,
+      sort = TRUE
+    )
+  )
+)
+```
+
+### Coming soon (TBD)
+
+If you want finer control over the sorting logic and provide your own, you can pass a `htmlwidgets::JS` callback instead:
+
+```{r}
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(
+      width = 150,
+      sort = htmlwidgets::JS(
+        "sort(order, col, grid) {
+          console.log(order);
+          console.log(col);
+          console.log(grid);
         }"
       )
     )

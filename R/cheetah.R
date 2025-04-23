@@ -9,6 +9,17 @@
 #' @param height Height of the widget
 #' @param elementId The element ID for the widget
 #' @param rownames Logical. Whether to show rownames. Defaults to TRUE.
+#' @param search Whether to enable a search field on top of the table.
+#' Default to `disabled`. Use `exact` for exact matching
+#' or `contains` to get larger matches.
+#'
+#' @return An HTML widget object of class 'cheetah' that can be:
+#'   \itemize{
+#'     \item Rendered in R Markdown documents
+#'     \item Used in Shiny applications
+#'     \item Displayed in R interactive sessions
+#'   }
+#'   The widget renders as an HTML table with all specified customizations.
 #'
 #' @import htmlwidgets
 #' @import jsonlite
@@ -21,8 +32,10 @@ cheetah <- function(
   width = NULL,
   height = NULL,
   elementId = NULL,
-  rownames = TRUE
+  rownames = TRUE,
+  search = c("disabled", "exact", "contains")
 ) {
+  search <- match.arg(search)
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
   processed_rn <- process_rownames(data, columns, rownames)
 
@@ -34,13 +47,12 @@ cheetah <- function(
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
 
-  columns <-
-    update_col_list_with_classes(data, columns) %>%
+  columns <- update_col_list_with_classes(data, columns) %>%
     add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
-  x = list(data = data_json, columns = columns)
+  x <- list(data = data_json, columns = columns, search = search)
 
   # create widget
   htmlwidgets::createWidget(
@@ -66,6 +78,9 @@ cheetah <- function(
 #' @param env The environment in which to evaluate \code{expr}.
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.
+#'
+#' @return \code{cheetahOutput} returns a Shiny output function that can be used in the UI definition.
+#'   \code{renderCheetah} returns a Shiny render function that can be used in the server definition.
 #'
 #' @name cheetah-shiny
 #'

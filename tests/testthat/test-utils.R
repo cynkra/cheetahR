@@ -11,7 +11,8 @@ test_that("test utils", {
       "columnType",
       "action",
       "style",
-      "message"
+      "message",
+      "sort"
     )
   )
 

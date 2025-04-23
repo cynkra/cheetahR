@@ -49,6 +49,8 @@
 #'        }")
 #'     )
 #' ```
+#' @param sort Whether to sort the column. Default to FALSE. May also be
+#' a JS callback to create custom logic (does not work yet).
 #'
 #' @export
 #' @return A list of column options to pass to the JavaScript API.
@@ -61,6 +63,7 @@ column_def <- function(
   action = NULL,
   style = NULL,
   message = NULL
+  sort = FALSE
 ) {
   check_column_type(column_type)
   if (!is.null(message) && !inherits(message, "JS_EVAL"))
@@ -74,5 +77,6 @@ column_def <- function(
     action = action,
     style = style,
     message = message
+    sort = sort
   )
 }
