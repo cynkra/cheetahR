@@ -87,53 +87,6 @@ HTMLWidgets.widget({
           grid.records = x.data;
         }
 
-
-        // Search feature
-        if (x.search !== 'disabled') {
-          const filterDataSource = new cheetahGrid
-            .data
-            .FilterDataSource(
-              cheetahGrid.data.DataSource.ofArray(x.data)
-            );
-          grid.dataSource = filterDataSource;
-
-          $(`#${el.id}`).prepend(
-            `<label>Filter:</label><input id="${el.id}-filter-input" style="margin: 10px;"/>`
-          )
-
-          $(`#${el.id}-filter-input`).on('input', (e) => {
-            const filterValue = $(e.currentTarget).val();
-            filterDataSource.filter = filterValue
-              ? (record) => {
-                // filtering method
-                for (const k in record) {
-                  let testCond;
-                  switch (x.search) {
-                    case 'contains':
-                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;;
-                      break;
-                    case 'exact':
-                      let r = new RegExp(`^${filterValue}$`);
-                      testCond = r.test(`${record[k]}`);
-                      break;
-                    default:
-                      console.log(`${x.search} value not implemented yet.`);
-                  }
-                  if (testCond) {
-                    return true;
-                  }
-                }
-                return false;
-              }
-              : null;
-            grid.invalidate();
-          })
-        } else {
-          // Array data to be displayed on the grid
-          grid.records = x.data;
-        }
-
-
         // Only is Shiny exists
         if (HTMLWidgets.shinyMode) {
           const {

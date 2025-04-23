@@ -26,6 +26,29 @@
 #'   \item \code{"radio"} for radio action columns.
 #' }
 #' @param style Column style.
+#' @param message Cell message. Expect a [htmlwidgets::JS()] function that
+#' takes `rec` as argument. It must return an object with two properties: `type` for the message
+#' type (`"info"`, `"warning"`, `"error"`) and the `message` that holds the text to display.
+#' The latter can leverage a JavaScript ternary operator involving `rec.<COLNAME>` (`COLNAME` being the name
+#' of the column for which we define the message) to check whether the predicate function is TRUE.
+#' See details for example of usage.
+#'
+#' @details
+#' ## Cell messages
+#' When you write a message, you can pass a function like so:
+#' ```
+#'   <COLNAME> = column_def(
+#'     action = "input",
+#'      message = JS(
+#'       "function(rec) {
+#'          return {
+#'            //info message
+#'            type: 'info',
+#'            message: rec.<COLNAME> ? null : 'Please check.',
+#'          }
+#'        }")
+#'     )
+#' ```
 #' @param sort Whether to sort the column. Default to FALSE. May also be
 #' a JS callback to create custom logic (does not work yet).
 #'
@@ -39,9 +62,12 @@ column_def <- function(
   column_type = NULL,
   action = NULL,
   style = NULL,
+  message = NULL,
   sort = FALSE
 ) {
   check_column_type(column_type)
+  if (!is.null(message) && !inherits(message, "JS_EVAL"))
+    stop("message must be a JavaScript function wrapped by htmlwidgets::JS().")
   list(
     caption = name,
     width = width,
@@ -50,6 +76,7 @@ column_def <- function(
     columnType = column_type,
     action = action,
     style = style,
+    message = message,
     sort = sort
   )
 }
