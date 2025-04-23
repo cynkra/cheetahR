@@ -113,6 +113,11 @@ cheetah(
             type: 'error',
             message: rec.Species === 'setosa' ? 'Invalid specie type.' : null,
           }
+        "
+      )
+    )
+  )
+)
 ```
 
 ## Filtering data
