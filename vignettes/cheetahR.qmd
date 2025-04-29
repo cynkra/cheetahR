@@ -166,3 +166,64 @@ cheetah(
   )
 )
 ```
+
+
+## `cheetah()` usage in Shiny
+cheetahR works seamlessly in a Shiny app. You can use it in both the UI and server components. In the UI, simply call `cheetahR::cheetahOutput()` to create a placeholder for the grid. In the server, use `cheetahR::renderCheetah()` to render the grid with your data and options.
+
+The grid will automatically update when the underlying data changes, making it perfect for reactive applications. All features like filtering, sorting, and custom column definitions work exactly the same way as in standalone R usage.
+
+
+One special feature that works particularly well in Shiny is the `menu` column type, which allows users to select from predefined options in a dropdown menu. This is ideal for interactive data editing workflows.
+
+## Menu column in Shiny
+By default, `cheetah()` automatically detects any "factor" columns in your data and converts them into menu columns. A menu column displays a dropdown menu with predefined options that users can select from. This is particularly useful when you want to restrict input to a specific set of valid choices. For example, if you have a factor column with levels "Low", "Medium", and "High", it will be displayed as a dropdown menu with these three options.
+```{r, eval=FALSE}
+library(shiny)
+library(bslib)
+library(cheetahR)
+
+
+ui <- page_fluid(cheetahOutput("grid"))
+
+server <- function(input, output) {
+  output$grid <- renderCheetah({
+    cheetah(data = iris)
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+![Default menu column sample 1](figures/default_menucolumn_img_1.png)
+
+![Default menu column sample 2](figures/default_menucolumn_img_2.png)
+
+### Customizing the 'menu options'
+```{r, eval=FALSE}
+library(shiny)
+library(bslib)
+library(cheetahR)
+
+ui <- page_fluid(cheetahOutput("grid"))
+
+server <- function(input, output) {
+  output$grid <- renderCheetah({
+    cheetah(data = iris,
+            columns = list(
+              Species = column_def(
+                column_type = "menu",
+                action = "inline_menu",
+                menu_options = list(
+                  setosa = "Option Setosa",
+                  versicolor = "Option Vericolor" ,
+                  virginica = "Option Virginica"
+                )
+              )
+            )
+          )
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+![Customized menu column sample ](figures/customized_menucolumn_img.png)
