@@ -1,3 +1,8 @@
+is_testing <- function ()
+{
+  identical(Sys.getenv("TESTTHAT"), "true")
+}
+
 is_named_list <- function(x) {
   is.list(x) && !is.null(names(x)) && all(names(x) != "")
 }
@@ -81,12 +86,13 @@ check_column_type <- function(x) {
 update_col_list_with_classes <- function(data, col_list) {
   col_classes <- lapply(data, class)
   in_shiny <- shiny::isRunning()
+  is_testing <- is_testing()
 
   for (col_name in names(col_classes)) {
     if (is.null(col_list[[col_name]]$columnType)) {
       if (col_classes[[col_name]] == "numeric") {
         col_list[[col_name]]$columnType <- "number"
-      } else if (col_classes[[col_name]] == "factor" && in_shiny) {
+      } else if (col_classes[[col_name]] == "factor" && any(in_shiny, is_testing)) {
         # This is to recover the possible choices for a factor column.
         menu_opt <- lapply(
           unique(data[[col_name]]),
