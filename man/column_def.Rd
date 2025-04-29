@@ -12,7 +12,9 @@ column_def(
   column_type = NULL,
   action = NULL,
   menu_options = NULL,
-  style = NULL
+  style = NULL,
+  message = NULL,
+  sort = FALSE
 )
 }
 \arguments{
@@ -54,6 +56,16 @@ and \code{label} element.
 The \code{label} element is the label that will be displayed in the menu.}
 
 \item{style}{Column style.}
+
+\item{message}{Cell message. Expect a \code{\link[htmlwidgets:JS]{htmlwidgets::JS()}} function that
+takes \code{rec} as argument. It must return an object with two properties: \code{type} for the message
+type (\code{"info"}, \code{"warning"}, \code{"error"}) and the \code{message} that holds the text to display.
+The latter can leverage a JavaScript ternary operator involving \verb{rec.<COLNAME>} (\code{COLNAME} being the name
+of the column for which we define the message) to check whether the predicate function is TRUE.
+See details for example of usage.}
+
+\item{sort}{Whether to sort the column. Default to FALSE. May also be
+a JS callback to create custom logic (does not work yet).}
 }
 \value{
 A list of column options to pass to the JavaScript API.
@@ -61,4 +73,23 @@ A list of column options to pass to the JavaScript API.
 \description{
 Needed by \link{cheetah} to customize
 columns individually.
+}
+\details{
+\subsection{Cell messages}{
+
+When you write a message, you can pass a function like so:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  <COLNAME> = column_def(
+    action = "input",
+     message = JS(
+      "function(rec) \{
+         return \{
+           //info message
+           type: 'info',
+           message: rec.<COLNAME> ? null : 'Please check.',
+         \}
+       \}")
+    )
+}\if{html}{\out{</div>}}
+}
 }
