@@ -31,8 +31,23 @@ HTMLWidgets.widget({
             ...(userMap[item.field] || {})
           }));
 
+          // Iterate over the list and process the `action` property if it is not null or undefined
+          columns.forEach((obj) => {
+            if (obj.action != null) {  // Checks for both null and undefined
+              if (obj.action.type === "inline_menu") {
+                obj.columnType = new cheetahGrid.columns.type.MenuColumn({
+                  options: obj.action.options,
+                });
+
+                obj.action = new cheetahGrid.columns.action.InlineMenuEditor({
+                  options: obj.action.options,
+                });
+              }
+            }
+          });
+
         } else {
-          columns = defaultCol
+          columns = defaultCol;
         }
 
         const grid = new cheetahGrid.ListGrid({

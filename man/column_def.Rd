@@ -11,6 +11,7 @@ column_def(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
+  menu_options = NULL,
   style = NULL,
   message = NULL,
   sort = FALSE
@@ -25,25 +26,34 @@ column_def(
 
 \item{max_width}{Column max width.}
 
-\item{column_type}{Column type. There are 6 possible options:
+\item{column_type}{Column type. By default, the column type is inferred from the data type of the column.
+There are 7 possible options:
 \itemize{
 \item \code{"text"} for text columns.
 \item \code{"number"} for numeric columns.
 \item \code{"check"} for check columns.
 \item \code{"image"} for image columns.
 \item \code{"radio"} for radio columns.
-\item \code{"multilinetext"} for multiline text in columns.
+\item \code{"multilinetext"} for multiline text columns.
+\item \code{"menu"} for menu selection columns. If \code{column_type == "menu"},
+action parameter must be set to "inline_menu" and menu_options must be provided.
+Note: Works efficiently only in shiny.
 }}
 
 \item{action}{The action property defines column actions. Select
-the appropriate Action class for the column type. For instance,
-if the column type is \code{"text"}, the action can be \code{"input"}.
-There are 3 supported actions:
+the appropriate Action class for the column type.
 \itemize{
 \item \code{"input"} for input action columns.
 \item \code{"check"} for check action columns.
 \item \code{"radio"} for radio action columns.
+\item \code{"inline_menu"} for menu selection columns.
 }}
+
+\item{menu_options}{A list of menu options when using \code{column_type = "menu"}.
+Each option should be a list with \code{value} and \code{label} elements.
+The menu options must be a list of lists, each containing a \code{value}
+and \code{label} element.
+The \code{label} element is the label that will be displayed in the menu.}
 
 \item{style}{Column style.}
 
