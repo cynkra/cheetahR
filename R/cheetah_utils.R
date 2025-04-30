@@ -118,6 +118,7 @@ column_def <- function(
         action
       }
     },
+    style = style,
     message = message,
     sort = sort
   )
