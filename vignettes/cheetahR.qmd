@@ -168,7 +168,7 @@ cheetah(
   columns = list(
     Sepal.Width = column_def(
       action = "input",
-      style = list(textAlign = "left"),
+      style = list(textAlign = "center"),
       message = add_cell_message(type = "warning", message = "rec['Sepal.Width'] <= 3 ? 'NarrowSepal' : 'WideSepal';")
     )
   )
