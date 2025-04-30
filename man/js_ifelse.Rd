@@ -2,20 +2,20 @@
 % Please edit documentation in R/js_ifelse.R
 \name{js_ifelse}
 \alias{js_ifelse}
-\title{Convert an R-style conditional to a JS ternary expression}
+\title{Convert an R logical expression into a JS ternary expression}
 \usage{
 js_ifelse(condition, true_result, false_result)
 }
 \arguments{
-\item{condition}{An R expression (logical) using \\%in\\%, \\%notin\\% or grepl(), etc.}
+\item{condition}{An R logical expression (supports \%in\% / \%notin\% / grepl() / comparisons / & |)}
 
-\item{true_result}{A string value to return when the condition is TRUE.}
+\item{true_result}{String to return when the condition is TRUE}
 
-\item{false_result}{A string value to return when the condition is FALSE.}
+\item{false_result}{String to return when the condition is FALSE}
 }
 \value{
-A character string containing a JavaScript ternary expression.
+A single character string containing a JavaScript ternary expression.
 }
 \description{
-Convert an R-style conditional to a JS ternary expression
+Convert an R logical expression into a JS ternary expression
 }

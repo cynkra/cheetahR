@@ -1,85 +1,153 @@
-#' Convert an R-style conditional to a JS ternary expression
+#' Convert an R logical expression into a JS ternary expression
 #'
-#' @param condition An R expression (logical) using \%in\%, \%notin\% or grepl(), etc.
-#' @param true_result A string value to return when the condition is TRUE.
-#' @param false_result A string value to return when the condition is FALSE.
-#' @return A character string containing a JavaScript ternary expression.
+#' @param condition An R logical expression (supports %in% / %notin% / grepl() / comparisons / & |)
+#' @param true_result  String to return when the condition is TRUE
+#' @param false_result String to return when the condition is FALSE
+#' @return A single character string containing a JavaScript ternary expression.
 #' @export
+# js_ifelse <- function(condition, true_result, false_result) {
+#   # 1) Capture the unevaluated condition as a single string
+#   txt <- paste(deparse(substitute(condition)), collapse = " ")
+#
+#   # 2) Force all " to ' in the condition itself
+#   txt <- gsub("\"", "'", txt, fixed = TRUE)
+#
+#   # 3) Handle %notin% and %in%
+#   handle_in <- function(text) {
+#     pat <- "(\\b[[:alnum:]_.]+)\\s*%(not)?in%\\s*c\\(([^)]+)\\)"
+#     m <- gregexpr(pat, text, perl = TRUE)[[1]]
+#     if (m[1] == -1) return(text)
+#     for(raw in regmatches(text, gregexpr(pat, text, perl=TRUE))[[1]]) {
+#       parts <- regmatches(raw, regexec(pat, raw, perl=TRUE))[[1]]
+#       var   <- parts[2]
+#       neg   <- !is.na(parts[3]) && nzchar(parts[3])
+#       vals  <- strsplit(parts[4], ",")[[1]]
+#       vals  <- trimws(gsub("^['\"]|['\"]$", "", vals))
+#       # build a single-quoted JS array
+#       arr   <- paste0("['", paste(vals, collapse = "','"), "']")
+#       expr  <- sprintf("%s.includes(rec['%s'])", arr, var)
+#       if (neg) expr <- paste0("!", expr)
+#       text  <- sub(pat, expr, text, perl=TRUE)
+#     }
+#     text
+#   }
+#
+#   txt <- handle_in(txt)
+#
+#   # 4) Handle grepl() and !grepl()
+#   handle_grep <- function(text) {
+#     pat <- "(!?)grepl\\((['\"].+?['\"]),\\s*([[:alnum:]_.]+)\\)"
+#     m <- gregexpr(pat, text, perl = TRUE)[[1]]
+#     if (m[1] == -1) return(text)
+#     for(raw in regmatches(text, gregexpr(pat, text, perl=TRUE))[[1]]) {
+#       parts <- regmatches(raw, regexec(pat, raw, perl=TRUE))[[1]]
+#       notp    <- nzchar(parts[2])
+#       pattern <- gsub("^['\"]|['\"]$", "", parts[3])
+#       var     <- parts[4]
+#       expr    <- sprintf("%s/%s/.test(rec['%s'])",
+#                          if (notp) "!" else "", pattern, var)
+#       text    <- sub(pat, expr, text, perl=TRUE)
+#     }
+#     text
+#   }
+#
+#   txt <- handle_grep(txt)
+#
+#   # 5) Operators: &| != ==
+#   txt <- gsub("!=", "!==", txt, fixed = TRUE)
+#   txt <- gsub("==", "===",  txt, fixed = TRUE)
+#   txt <- gsub(" & ", " && ", txt, fixed = TRUE)
+#   txt <- gsub(" | ", " || ", txt, fixed = TRUE)
+#
+#   # 6) Prefix **all** remaining bare names (fields) with rec['...']
+#   #    (skip numbers, JS keywords, already bracketed, strings, regex)
+#   prefix_pat <- "(?<![\\w'\"/\\[\\]])\\b([A-Za-z_][A-Za-z0-9_.]*)\\b(?![\\]\\('\"/])"
+#   txt <- gsub(prefix_pat,
+#               "rec['\\1']",
+#               txt,
+#               perl=TRUE)
+#
+#   # 7) Wrap the true/false results
+#   wrap <- function(x) {
+#     # ensure single-quoted
+#     x2 <- gsub("\"", "'", x, fixed = TRUE)
+#     if (x2 == "") "null" else sprintf("'%s'", x2)
+#   }
+#   tval <- wrap(true_result)
+#   fval <- wrap(false_result)
+#
+#   # 8) Assemble
+#   sprintf("%s ? %s : %s;", txt, tval, fval)
+# }
 js_ifelse <- function(condition, true_result, false_result) {
-  # Capture the unevaluated expression and convert it to string
-  condition <- substitute(condition)
-  condition <- paste(deparse(condition), collapse = " ")
+  # 1) Capture the unevaluated condition as a single string
+  txt <- paste(deparse(substitute(condition)), collapse = " ")
 
-  # Handle %in% and %notin%
-  handle_in_operators <- function(text) {
-    pattern <- "(\\b[[:alnum:]_]+)\\s*%(not)?in%\\s*c\\(([^\\)]+)\\)"
-    matches <- gregexpr(pattern, text, perl = TRUE)[[1]]
+  # 2) Force all " to ' in the condition itself
+  txt <- gsub("\"", "'", txt, fixed = TRUE)
+
+  # 3) Handle %notin% and %in%
+  handle_in <- function(text) {
+    pat <- "(\\b[[:alnum:]_.]+)\\s*%(not)?in%\\s*c\\(([^)]+)\\)"
+    matches <- gregexpr(pat, text, perl = TRUE)[[1]]
     if (matches[1] == -1) return(text)
 
-    regmatches_list <- regmatches(text, gregexpr(pattern, text, perl = TRUE))
+    for (raw in regmatches(text, gregexpr(pat, text, perl = TRUE))[[1]]) {
+      parts <- regmatches(raw, regexec(pat, raw, perl = TRUE))[[1]]
+      var   <- parts[2]
+      neg   <- !is.na(parts[3]) && nzchar(parts[3])
+      vals  <- strsplit(parts[4], ",")[[1]]
+      vals  <- trimws(gsub("^['\"]|['\"]$", "", vals))
 
-    for (match in regmatches_list[[1]]) {
-      var <- sub("^([[:alnum:]_]+).*", "\\1", match)
-      is_negated <- grepl("%notin%", match)
-      values <- sub(".*%not?in%\\s*c\\(([^\\)]+)\\)", "\\1", match)
-      values_vec <- trimws(gsub("\"|'", "", unlist(strsplit(values, ","))))
-      js_array <- paste0("[", paste0("'", values_vec, "'", collapse = ", "), "]")
-      js_expr <- paste0(js_array, ".includes(rec.", var, ")")
-      if (is_negated) js_expr <- paste0("!", js_expr)
-      text <- sub(pattern, js_expr, text, perl = TRUE)
+      # build a single-quoted JS array literal
+      arr   <- sprintf("['%s']", paste(vals, collapse = "','"))
+      expr  <- sprintf("%s.includes(rec['%s'])", arr, var)
+      if (neg) expr <- paste0("!", expr)
+
+      text <- sub(pat, expr, text, perl = TRUE)
     }
-
     text
   }
+  txt <- handle_in(txt)
 
-  # Handle grepl() expressions
-  handle_grepl <- function(text) {
-    pattern <- "(!?\\s*)grepl\\((['\"].+?['\"]),\\s*([[:alnum:]_]+)\\)"
-    matches <- gregexpr(pattern, text, perl = TRUE)[[1]]
+  # 4) Handle grepl() and !grepl(), capturing the inner regex
+  handle_grep <- function(text) {
+    pat <- "(!?)grepl\\((['\"])(.*?)\\2,\\s*([[:alnum:]_.]+)\\)"
+    matches <- gregexpr(pat, text, perl = TRUE)[[1]]
     if (matches[1] == -1) return(text)
 
-    regmatches_list <- regmatches(text, gregexpr(pattern, text, perl = TRUE))
+    for (raw in regmatches(text, gregexpr(pat, text, perl = TRUE))[[1]]) {
+      parts <- regmatches(raw, regexec(pat, raw, perl = TRUE))[[1]]
+      notp    <- nzchar(parts[2])
+      pattern <- parts[4]
+      var     <- parts[5]
 
-    for (match in regmatches_list[[1]]) {
-      not_prefix <- ifelse(grepl("^!", match), "!", "")
-      regex <- sub(".*grepl\\((['\"].+?['\"]).*", "\\1", match)
-      var <- sub(".*grepl\\(.*?,\\s*([[:alnum:]_]+)\\)", "\\1", match)
-      regex <- gsub("^['\"]|['\"]$", "", regex)  # Remove quotes
-      js_expr <- paste0(not_prefix, "/", regex, "/.test(rec.", var, ")")
-      text <- sub(pattern, js_expr, text, perl = TRUE)
+      expr <- sprintf("%s/%s/.test(rec['%s'])",
+                      if (notp) "!" else "", pattern, var)
+      text <- sub(pat, expr, text, perl = TRUE)
     }
-
     text
   }
+  txt <- handle_grep(txt)
 
-  condition <- condition |> handle_in_operators() |> handle_grepl()
+  # 5) Replace R logical operators with JS equivalents
+  txt <- gsub("!=", "!==", txt, fixed = TRUE)
+  txt <- gsub("==", "===",  txt, fixed = TRUE)
+  txt <- gsub(" & ", " && ", txt, fixed = TRUE)
+  txt <- gsub(" | ", " || ", txt, fixed = TRUE)
 
-  # Replace R logical operators with JS equivalents
-  js_condition <- condition
-  js_condition <- gsub("&&", "&&", js_condition)
-  js_condition <- gsub("&", "&&", js_condition)
-  js_condition <- gsub("\\|\\|", "||", js_condition)
-  js_condition <- gsub("\\|", "||", js_condition)
-  js_condition <- gsub("==", "===", js_condition)
-  js_condition <- gsub("!=", "!==", js_condition)
+  # 6) Prefix all remaining bare names with rec['...'], skipping 'rec' itself
+  prefix_pat <- "(?<![\\w'\"/\\[\\]])\\b(?!rec\\b)([A-Za-z_][A-Za-z0-9_.]*)\\b(?![\\]\\('\"/])"
+  txt <- gsub(prefix_pat, "rec['\\1']", txt, perl = TRUE)
 
-  # Prefix variables with rec., skipping those already prefixed or in JS calls
-  js_condition <- gsub(
-    "(?<![\\.'\"\\]\\w])\\b([A-Za-z_][A-Za-z0-9_]*)\\b",
-    "rec.\\1",
-    js_condition,
-    perl = TRUE
-  )
-
-  # Format return values
-  format_js_value <- function(x) {
-    if (x == "") "null" else paste0("'", x, "'")
+  # 7) Wrap the true/false results in single quotes (or null)
+  wrap <- function(x) {
+    x2 <- gsub("\"", "'", x, fixed = TRUE)
+    if (x2 == "") "null" else sprintf("'%s'", x2)
   }
+  tval <- wrap(true_result)
+  fval <- wrap(false_result)
 
-  true_val <- format_js_value(true_result)
-  false_val <- format_js_value(false_result)
-
-  # Assemble JS ternary expression
-  paste0(js_condition, " ? ", true_val, " : ", false_val, ";")
+  # 8) Assemble and return the JS ternary
+  sprintf("%s ? %s : %s;", txt, tval, fval)
 }
-
