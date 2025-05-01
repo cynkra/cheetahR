@@ -4,14 +4,14 @@
 \alias{js_ifelse}
 \title{Convert an R logical expression into a JS ternary expression}
 \usage{
-js_ifelse(condition, true_result, false_result)
+js_ifelse(condition, true_result = "", false_result = "")
 }
 \arguments{
 \item{condition}{An R logical expression (supports \%in\% / \%notin\% / grepl() / comparisons / & |)}
 
-\item{true_result}{String to return when the condition is TRUE}
+\item{true_result}{String to return when the condition is TRUE. Default is an empty string, which interprets as \code{null} in JS.}
 
-\item{false_result}{String to return when the condition is FALSE}
+\item{false_result}{String to return when the condition is FALSE. Default is an empty string, which interprets as \code{null} in JS.}
 }
 \value{
 A single character string containing a JavaScript ternary expression.
