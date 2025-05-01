@@ -90,7 +90,7 @@ update_col_list_with_classes <- function(data, col_list) {
 
   for (col_name in names(col_classes)) {
     if (is.null(col_list[[col_name]]$columnType)) {
-      if (col_classes[[col_name]] == "numeric") {
+      if (col_classes[[col_name]] %in% c("numeric", "integer")) {
         col_list[[col_name]]$columnType <- "number"
       } else if (col_classes[[col_name]] == "factor" && any(in_shiny, is_testing)) {
         # This is to recover the possible choices for a factor column.
