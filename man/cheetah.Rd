@@ -11,7 +11,8 @@ cheetah(
   height = NULL,
   elementId = NULL,
   rownames = TRUE,
-  search = c("disabled", "exact", "contains")
+  search = c("disabled", "exact", "contains"),
+  sortable = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ cheetah(
 \item{search}{Whether to enable a search field on top of the table.
 Default to \code{disabled}. Use \code{exact} for exact matching
 or \code{contains} to get larger matches.}
+
+\item{sortable}{Logical. Whether to enable sorting on all columns. Defaults to TRUE.}
 }
 \value{
 An HTML widget object of class 'cheetah' that can be:

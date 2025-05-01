@@ -12,6 +12,7 @@
 #' @param search Whether to enable a search field on top of the table.
 #' Default to `disabled`. Use `exact` for exact matching
 #' or `contains` to get larger matches.
+#' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
 #'
 #' @return An HTML widget object of class 'cheetah' that can be:
 #'   \itemize{
@@ -33,7 +34,8 @@ cheetah <- function(
   height = NULL,
   elementId = NULL,
   rownames = TRUE,
-  search = c("disabled", "exact", "contains")
+  search = c("disabled", "exact", "contains"),
+  sortable = TRUE
 ) {
   search <- match.arg(search)
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
@@ -49,6 +51,7 @@ cheetah <- function(
 
   columns <-
     update_col_list_with_classes(data, columns) %>%
+    make_table_sortable(sortable = sortable) %>%
       add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")

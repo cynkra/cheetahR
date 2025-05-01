@@ -121,23 +121,20 @@ cheetah(
 )
 ```
 
-## Filtering data
+## Sorting option in cheetahR
 
-You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
-
-```{r}
-cheetah(penguins, search = "contains")
+By default a cheetahR table is sortable. Otherwise, set `sortable = FALSE` in `cheetah()` to disable this functionality:
+```{r, eval=TRUE}
+cheetah(mtcars, rownames = FALSE, sortable = FALSE)
 ```
 
-<br/>
 
-## Sortable columns
-
-To make a column sortable, you can pass `sort = TRUE` to the `column_def()` function:
+However, to indivdually control the sorting option of each columns in the table, pass `sort = TRUE` to the `column_def()`:
 
 ```{r}
 cheetah(
   mtcars,
+  sortable = FALSE,
   columns = list(
     rownames = column_def(
       width = 150,
@@ -154,6 +151,7 @@ If you want finer control over the sorting logic and provide your own, you can p
 ```{r}
 cheetah(
   mtcars,
+  sortable = FALSE,
   columns = list(
     rownames = column_def(
       width = 150,
@@ -166,6 +164,16 @@ cheetah(
   )
 )
 ```
+
+## Filtering data
+
+You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
+
+```{r}
+cheetah(penguins, search = "contains")
+```
+
+<br/>
 
 
 ## `cheetah()` usage in Shiny

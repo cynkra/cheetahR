@@ -126,3 +126,16 @@ check_action_type <- function(action = NULL, column_type = NULL) {
     stop("'inline_menu' action can only be used with 'menu' column type")
   }
 }
+
+make_table_sortable <- function(columns, sortable = TRUE) {
+  if (!sortable) {
+    return(columns)
+  } else {
+    for (col_name in names(columns)) {
+      if (is.null(columns[[col_name]]$sort)) {
+        columns[[col_name]]$sort <- TRUE
+      }
+    }
+  }
+  columns
+}
