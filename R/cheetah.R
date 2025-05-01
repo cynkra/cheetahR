@@ -30,6 +30,7 @@
 cheetah <- function(
   data,
   columns = NULL,
+  column_group = NULL,
   width = NULL,
   height = NULL,
   elementId = NULL,

@@ -115,3 +115,12 @@ column_def <- function(
     sort = sort
   )
 }
+
+#' Column group definitions
+column_group <- function(name = NULL, columns = NULL, style = NULL) {
+  list(
+    name = name,
+    columns = columns,
+    style = style
+  )
+}
