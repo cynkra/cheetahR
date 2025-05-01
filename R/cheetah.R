@@ -52,7 +52,7 @@ cheetah <- function(
   columns <-
     update_col_list_with_classes(data, columns) %>%
     make_table_sortable(sortable = sortable) %>%
-      add_field_to_list()
+    add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x

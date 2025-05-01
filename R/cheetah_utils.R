@@ -90,8 +90,9 @@ column_def <- function(
     stop("menu_options must be provided when column_type is 'menu'")
   }
 
-  if (!is.null(message) && !inherits(message, "JS_EVAL"))
+  if (!is.null(message) && !inherits(message, "JS_EVAL")) {
     stop("message must be a JavaScript function wrapped by htmlwidgets::JS().")
+  }
 
   list(
     caption = name,
