@@ -60,8 +60,20 @@
 #' @param sort Whether to sort the column. Default to FALSE. May also be
 #' a JS callback to create custom logic (does not work yet).
 #'
-#' @export
 #' @return A list of column options to pass to the JavaScript API.
+#'
+#' @examples
+#' cheetah(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = column_def(name = "Length"),
+#'     Sepal.Width = column_def(name = "Width"),
+#'     Petal.Length = column_def(name = "Length"),
+#'     Petal.Width = column_def(name = "Width")
+#'   )
+#' )
+#'
+#' @export
 column_def <- function(
   name = NULL,
   width = NULL,

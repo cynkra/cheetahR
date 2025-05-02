@@ -93,3 +93,15 @@ When you write a message, you can pass a function like so:
 }\if{html}{\out{</div>}}
 }
 }
+\examples{
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  )
+)
+
+}
