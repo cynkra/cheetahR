@@ -129,10 +129,39 @@ column_def <- function(
 }
 
 #' Column group definitions
-column_group <- function(name = NULL, columns = NULL, style = NULL) {
-  list(
-    name = name,
-    columns = columns,
-    style = style
+#'
+#' Creates a column group definition for grouping columns in a Cheetah Grid widget.
+#'
+#' @param name Character string. The name to display for the column group.
+#' @param columns Character vector. The names of the columns to include in this group.
+#' @param header_style Named list of possibleCSS style properties to apply to the column group header.
+#'
+#' @return A list containing the column group definition.
+#'
+#' @examples
+#' cheetah(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = column_def(name = "Length"),
+#'     Sepal.Width = column_def(name = "Width"),
+#'     Petal.Length = column_def(name = "Length"),
+#'     Petal.Width = column_def(name = "Width")
+#'   ),
+#'   column_group = list(
+#'     column_group(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+#'     column_group(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+#'   )
+#' )
+#'
+#' @export
+column_group <- function(name = NULL, columns, header_style = NULL) {
+  column_style_check(header_style)
+
+  dropNulls(
+    list(
+      caption = name,
+      columns = columns,
+      headerStyle = header_style
+    )
   )
 }
