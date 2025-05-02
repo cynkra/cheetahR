@@ -1,5 +1,5 @@
 import 'widgets';
-import { asHeader } from '../modules/header.js';
+import { combineColumnsAndGroups } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
 
 HTMLWidgets.widget({
@@ -48,6 +48,10 @@ HTMLWidgets.widget({
 
         } else {
           columns = defaultCol;
+        }
+
+        if (x.colGroup !== null) {
+          columns = combineColumnsAndGroups(columns, x.colGroup);
         }
 
         const grid = new cheetahGrid.ListGrid({
