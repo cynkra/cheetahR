@@ -3,6 +3,7 @@
 export(cheetah)
 export(cheetahOutput)
 export(column_def)
+export(column_group)
 export(renderCheetah)
 import(htmlwidgets)
 import(jsonlite)
