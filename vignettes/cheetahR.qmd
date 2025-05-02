@@ -144,6 +144,7 @@ cheetah(
 )
 ```
 
+
 ### Coming soon (TBD)
 
 If you want finer control over the sorting logic and provide your own, you can pass a `htmlwidgets::JS` callback instead:
@@ -160,6 +161,37 @@ cheetah(
           // your logic
         }"
       )
+    )
+  )
+)
+```
+
+## Column Grouping
+
+cheetahR allows you to group related columns together under a common header using `column_group()`. This creates a hierarchical structure in your table headers, making it easier to organize and understand related data.
+
+To group columns, use the `column_group()` function to define each group and specify which columns belong to it. Then pass the list of column groups to the `column_group` parameter in `cheetah()`.
+
+Here's an example grouping the Sepal and Petal measurements in the iris dataset:
+```{r}
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  ),
+  column_group = list(
+    column_group(
+      name = "Sepal",
+      columns = c("Sepal.Length", "Sepal.Width"),
+      header_style = list(textAlign = "center", bgColor = "#fbd4dd")
+    ),
+    column_group(
+      name = "Petal",
+      columns = c("Petal.Length", "Petal.Width"),
+      header_style = list(textAlign = "center", bgColor = "#d8edfc")
     )
   )
 )
