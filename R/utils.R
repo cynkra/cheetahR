@@ -1,5 +1,4 @@
-is_testing <- function ()
-{
+is_testing <- function() {
   identical(Sys.getenv("TESTTHAT"), "true")
 }
 
@@ -92,7 +91,9 @@ update_col_list_with_classes <- function(data, col_list) {
     if (is.null(col_list[[col_name]]$columnType)) {
       if (col_classes[[col_name]] %in% c("numeric", "integer")) {
         col_list[[col_name]]$columnType <- "number"
-      } else if (col_classes[[col_name]] == "factor" && any(in_shiny, is_testing)) {
+      } else if (
+        col_classes[[col_name]] == "factor" && any(in_shiny, is_testing)
+      ) {
         # This is to recover the possible choices for a factor column.
         menu_opt <- lapply(
           unique(data[[col_name]]),
@@ -117,12 +118,16 @@ check_action_type <- function(action = NULL, column_type = NULL) {
 
   valid_actions <- c("input", "check", "radio", "inline_menu")
   if (!action %in% valid_actions) {
-    stop("Invalid action type. Must be one of: ",
-         paste(valid_actions, collapse = ", "))
+    stop(
+      "Invalid action type. Must be one of: ",
+      paste(valid_actions, collapse = ", ")
+    )
   }
 
   # Validate action-column type compatibility
-  if (action == "inline_menu" && any(is.null(column_type), column_type != "menu")) {
+  if (
+    action == "inline_menu" && any(is.null(column_type), column_type != "menu")
+  ) {
     stop("'inline_menu' action can only be used with 'menu' column type")
   }
 }
