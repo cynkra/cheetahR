@@ -7,6 +7,7 @@
 cheetah(
   data,
   columns = NULL,
+  column_group = NULL,
   width = NULL,
   height = NULL,
   elementId = NULL,
@@ -20,6 +21,8 @@ cheetah(
 
 \item{columns}{A list of column definitions. Each column can be customized using
 \code{column_def()}.}
+
+\item{column_group}{A list of column groups. Each group can be customized using}
 
 \item{width}{Width of the widget}
 
