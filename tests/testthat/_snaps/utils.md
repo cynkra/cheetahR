@@ -1,4 +1,4 @@
-# test utils
+# test column defintion
 
     Code
       column_def(message = "test")
