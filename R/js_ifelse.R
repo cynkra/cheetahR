@@ -1,11 +1,11 @@
 #' Convert an R logical expression into a JS ternary expression
 #'
 #' @param condition An R logical expression (supports %in% / %notin% / grepl() / comparisons / & |)
-#' @param true_result  String to return when the condition is TRUE. Default is an empty string, which interprets as `null` in JS.
-#' @param false_result String to return when the condition is FALSE. Default is an empty string, which interprets as `null` in JS.
+#' @param if_true  String to return when the condition is TRUE. Default is an empty string, which interprets as `null` in JS.
+#' @param if_false String to return when the condition is FALSE. Default is an empty string, which interprets as `null` in JS.
 #' @return A single character string containing a JavaScript ternary expression.
 #' @export
-js_ifelse <- function(condition, true_result = "", false_result = "") {
+js_ifelse <- function(condition, if_true = "", if_false = "") {
   # 1) Capture the unevaluated condition as a single string
   txt <- paste(deparse(substitute(condition)), collapse = " ")
 
@@ -71,8 +71,8 @@ js_ifelse <- function(condition, true_result = "", false_result = "") {
     x2 <- gsub("\"", "'", x, fixed = TRUE)
     if (x2 == "") "null" else sprintf("'%s'", x2)
   }
-  tval <- wrap(true_result)
-  fval <- wrap(false_result)
+  tval <- wrap(if_true)
+  fval <- wrap(if_false)
 
   # 8) Assemble and return the JS ternary
   sprintf("%s ? %s : %s;", txt, tval, fval)
