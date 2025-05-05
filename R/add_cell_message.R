@@ -66,7 +66,7 @@ add_cell_message <- function(
   type = c("error", "warning", "info"),
   message = "message"
 ) {
-  type <- rlang::arg_match(type)
+  type <- match.arg(type)
 
   is_js_expr <- grepl("rec\\.|\\?|\\:|;$", message)
   js_msg <- if (is_js_expr) {
