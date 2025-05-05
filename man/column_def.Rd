@@ -104,3 +104,15 @@ Or use \code{add_cell_message()}:
 See \code{\link[=add_cell_message]{add_cell_message()}} for more details.
 }
 }
+\examples{
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  )
+)
+
+}
