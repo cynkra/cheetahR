@@ -70,12 +70,18 @@ HTMLWidgets.widget({
             );
           grid.dataSource = filterDataSource;
 
-          $(`#${el.id}`).prepend(
-            `<label>Filter:</label><input id="${el.id}-filter-input" style="margin: 10px;"/>`
-          )
+          const widget = document.getElementById(el.id);
+          const label = document.createElement('label');
+          label.textContent = 'Filter:';
+          // Create input
+          const input = document.createElement('input');
+          input.id = `${el.id}-filter-input`;
+          input.style.margin = '10px';
+          widget.prepend(label, input);
 
-          $(`#${el.id}-filter-input`).on('input', (e) => {
-            const filterValue = $(e.currentTarget).val();
+          const filterInput = document.getElementById(`${el.id}-filter-input`);
+          filterInput.addEventListener('input', (e) => {
+            const filterValue = document.getElementById(e.currentTarget.id).value;
             filterDataSource.filter = filterValue
               ? (record) => {
                 // filtering method
