@@ -5,6 +5,7 @@
 #' @param data A data frame or matrix to display
 #' @param columns A list of column definitions. Each column can be customized using
 #'   \code{column_def()}.
+#' @param column_group A list of column groups. Each group can be customized using
 #' @param width Width of the widget
 #' @param height Height of the widget
 #' @param elementId The element ID for the widget
@@ -30,6 +31,7 @@
 cheetah <- function(
   data,
   columns = NULL,
+  column_group = NULL,
   width = NULL,
   height = NULL,
   elementId = NULL,
@@ -49,6 +51,13 @@ cheetah <- function(
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
 
+  stopifnot(
+    "If not NULL, `column_groups` must be a named list or list of named lists" =
+      is.null(columns) |
+      is_named_list(column_group) |
+      all(unlist(lapply(column_group, is_named_list)))
+  )
+
   columns <-
     update_col_list_with_classes(data, columns) %>%
     make_table_sortable(sortable = sortable) %>%
@@ -56,7 +65,7 @@ cheetah <- function(
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
-  x <- list(data = data_json, columns = columns, search = search)
+  x <- list(data = data_json, columns = columns, colGroup = column_group, search = search)
 
   # create widget
   htmlwidgets::createWidget(

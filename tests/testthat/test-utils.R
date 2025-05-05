@@ -1,4 +1,4 @@
-test_that("test utils", {
+test_that("test column defintion", {
   expect_type(column_def(name = "Sepal_Length"), "list")
 
   expect_named(
@@ -22,6 +22,32 @@ test_that("test utils", {
       # Message must be wrapped by JS
       column_def(message = "test")
     }
+  )
+})
+
+test_that("test column group", {
+  expect_type(
+    column_group(
+      name = "Sepal",
+      columns = c("Sepal.Length", "Sepal.Width")
+    ),
+    "list"
+  )
+
+  expect_named(
+    column_group(
+      name = "Sepal",
+      columns = c("Sepal.Length", "Sepal.Width")
+    ),
+    c(
+      "caption",
+      "columns"
+    )
+  )
+
+  expect_error(
+    column_group(name = "Sepal"),
+    'argument "columns" is missing, with no default'
   )
 })
 
