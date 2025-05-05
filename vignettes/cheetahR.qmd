@@ -96,7 +96,9 @@ head(airquality, 10) %>%
 
 ## Cell messages
 
-You can define __cell messages__ by passing a JS function wrapped within `htmlwidget::JS()`. This function takes a single
+There are two ways to add __cell messages__ for validation
+
+1. Define __cell messages__ by passing a JS function wrapped within `htmlwidget::JS()`. This function takes a single
 parameter `rec` which refers to data row. It must return an object with 2 properties:
 
 - `type`: the message type. Valid types are `"info"`, `"warning"` and `"error"`.
@@ -121,7 +123,60 @@ cheetah(
 )
 ```
 
-## Sorting option in cheetahR
+2. Using `add_cell_message()`. A R helper function which provides a simpler interface to create cell messages. The function takes two arguments:
+
+- `type`: Message type (`"error"`, `"warning"`, or `"info"`). Defaults to `"error"`.
+- `message`: A string or JavaScript expression. If the message contains `rec.`, `?`, `:`, or ends with `;`, it is treated as raw JavaScript. Otherwise, it is escaped and wrapped in quotes.
+
+Here are some examples:
+
+```{r}
+# Prepare data
+set.seed(123)
+iris_rows <- sample(nrow(iris), 10)
+data <- iris[iris_rows, ]
+
+# Simple cell message
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(type = "info", message = "Ok")
+    )
+  )
+)
+```
+
+```{r}
+# Cell message using `js_ifelse()`
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(message = js_ifelse(Species == "setosa", "", "Invalid"))
+    )
+  )
+)
+```
+
+```{r}
+# Cell message using raw JS expression as string
+cheetah(
+  data,
+  columns = list(
+    Sepal.Width = column_def(
+      action = "input",
+      style = list(textAlign = "center"),
+      message = add_cell_message(type = "warning", message = "rec['Sepal.Width'] <= 3 ? 'NarrowSepal' : 'WideSepal';")
+    )
+  )
+)
+```
+
+
+## Sorting options in cheetahR
 
 By default a cheetahR table is sortable. Otherwise, set `sortable = FALSE` in `cheetah()` to disable this functionality:
 ```{r, eval=TRUE}

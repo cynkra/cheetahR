@@ -38,7 +38,8 @@
 #' takes `rec` as argument. It must return an object with two properties: `type` for the message
 #' type (`"info"`, `"warning"`, `"error"`) and the `message` that holds the text to display.
 #' The latter can leverage a JavaScript ternary operator involving `rec.<COLNAME>` (`COLNAME` being the name
-#' of the column for which we define the message) to check whether the predicate function is TRUE.
+#' of the column for which we define the message) to check whether the predicate function is TRUE. You can also
+#' use `add_cell_message()` to generated the expected JS expression.
 #' See details for example of usage.
 #'
 #' @details
@@ -57,6 +58,14 @@
 #'        }")
 #'     )
 #' ```
+#' Or use `add_cell_message()`:
+#' ```
+#'   <COLNAME> = column_def(
+#'     action = "input",
+#'      message = add_cell_message(type = "info", message = "Ok")
+#'     )
+#' ```
+#' See [add_cell_message()] for more details.
 #' @param sort Whether to sort the column. Default to FALSE. May also be
 #' a JS callback to create custom logic (does not work yet).
 #'
