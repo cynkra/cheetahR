@@ -69,7 +69,7 @@ The `column_type` parameter in `column_def()` allows you to specify different ty
 - `"multilinetext"`: For multiline text columns
 - `"menu"`: For dropdown menu selection columns
 
-If `column_type` parameter is optional. If it is not specified, the column type will be inferred from the data type.
+The `column_type` parameter is optional. If it is not specified, the column type will be inferred from the data type.
 
 ```{r}
 # Using checkbox column type to indicate NA values
@@ -93,6 +93,66 @@ head(airquality, 10) %>%
     )
   )
 ```
+Note! The check column is not clickable. This is because a corresponding value of "check" is required for the action parameter to activate the interactivity of the column.
+
+## Defining the column actions
+
+The `action` parameter in `column_def()` allows you to define interactive behaviors for columns. There are 4 possible actions:
+
+- `"input"`: Makes the column editable with text input
+- `"check"`: Makes the column editable with checkboxes 
+- `"radio"`: Makes the column editable with radio buttons
+- `"inline_menu"`: Makes the column editable with a dropdown menu (requires `column_type = "menu"` and `menu_options`)
+
+The action type must be compatible with the column type. For example, `"check"` action can only be used with `"check"` column type.
+```{r}
+head(airquality, 10) %>%
+  mutate(
+    has_na = if_any(everything(), is.na),
+    has_na = ifelse(has_na, "true", "false"),
+    .before = 1
+  ) %>%
+  cheetah(
+    columns = list(
+      has_na = column_def(
+        name = "Contains NA",
+        column_type = "check",
+        action = "check",
+        style = list(
+          uncheckBgColor = "#FDD",
+          checkBgColor = "rgb(255, 73, 72)",
+          borderColor = "red"
+        )
+      )
+    )
+  )
+```
+
+### Adding image to the table
+
+The `cheetah` widget supports displaying images in table cells by setting `column_type = "image"`. You can customize how images are displayed using style properties like `imageSizing`.
+```{r}
+img_url <- c(
+"https://assets.shannons.com.au/JD166AU033OKSAEF/Z8E73PWLE94D365M/7g7i8dxq4xdx0g61-me9867ab4krp0uio/jpg/2000x1500x3/vehicle/1973-mazda-rx4.jpg",
+"https://live.staticflickr.com/2529/3854349010_4783baf575_o.jpg",
+"https://photos.classiccars.com/cc-temp/listing/129/6646/18583131-1974-datsun-710-std.jpg",
+"https://tse2.mm.bing.net/th?id=OIP.qV1ZAVktze35RwUpEgtPmwAAAA&pid=Api&P=0&h=180",
+"https://tse1.mm.bing.net/th?id=OIP.OA_V14TTdu8nx36mC6VUeAHaEo&pid=Api&P=0&h=180",
+"https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_low/v1/editorial/dp/albums/album-3483/lg/Valiant-50-years-_6_.jpg"
+)
+```
+
+```{r, fig.height=3}
+data <- mutate(head(mtcars), image = img_url, .before = 1) 
+cheetah(
+  data,
+  columns = list(
+    rownames = column_def(width = 150),
+    image = column_def("images", width = 100, column_type = "image", style = list(imageSizing = "keep-aspect-ratio" ))
+  )
+)
+```
+
 
 ## Cell messages
 
@@ -135,7 +195,9 @@ Here are some examples:
 set.seed(123)
 iris_rows <- sample(nrow(iris), 10)
 data <- iris[iris_rows, ]
+```
 
+```{r}
 # Simple cell message
 cheetah(
   data,
@@ -148,8 +210,12 @@ cheetah(
 )
 ```
 
+### Cell message using `js_ifelse()`
+
+The `js_ifelse()` helper function provides a convenient way to write conditional JavaScript expressions in R. It follows the same syntax as R's `ifelse()` function but generates JavaScript code for use in cell messages. See possible examples:
+
+#### 1. Simple logic: numeric comparisons and equality
 ```{r}
-# Cell message using `js_ifelse()`
 cheetah(
   data,
   columns = list(
@@ -160,16 +226,158 @@ cheetah(
   )
 )
 ```
-
 ```{r}
-# Cell message using raw JS expression as string
 cheetah(
   data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(Sepal.Length > 5, "BigSepal", "")
+      )
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(Sepal.Width <= 3, "NarrowSepal", "WideSepal")
+      )
+    )
+  )
+)
+```
+
+#### 2. Combined logic
+```{r}
+`%notin%` <- Negate('%in%')
+
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(Sepal.Length > 5 & Species %notin% c("setosa"), "E", "X")
+      )
+    )
+  )
+)
+```
+
+#### 3. Basic `%in%`  and  `%notin%`
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        message = js_ifelse(Species %in% c("setosa", "virginica"), "Bad")
+      )
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(Species %notin% c("setosa"), "OK")
+      )
+    )
+  )
+)
+```
+
+#### 4. Using `grepl()` and `!grepl()`
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(grepl("^vir", Species), "Yes")
+      )
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(!grepl("set", Species), "NoSet", "")
+      )
+    )
+  )
+)
+```
+
+#### 5. Truthiness of a bare variable
+
+The `js_ifelse()` function can check the truthiness of a variable directly, similar to JavaScript's truthy/falsy behavior. Empty strings, `NA`, `null`, and `undefined` are considered falsy values, while non-empty strings and other values are considered truthy. This is useful for simple existence checks.
+```{r}
+# Add an extra column to the data
+check <-
+  c(
+    "", NA,
+    "ok", NA,
+    "good", "",
+    "", "good",
+    "ok", "better"
+  )
+
+data <- mutate(data, Check = check, .before = 1)
+
+cheetah(
+  data,
+  columns = list(
+    Check = column_def(
+      name = "",
+      column_type = "check",
+      action = "check",
+      message = add_cell_message(
+        message = js_ifelse(Check, if_false = "Please check.")
+      )
+    )
+  )
+)
+```
+
+
+### Cell message using raw JS expression as string
+
+Finally, within `add_cell_message()` you can pass raw JavaScript expressions as strings to the `message` option. In this case, you can either pass the JavaScript string directly or wrap it in `htmlwidgets::JS()`. The JavaScript expression should evaluate to a string that will be displayed as the message.
+```{r}
+cheetah(
+  data[,-1],
   columns = list(
     Sepal.Width = column_def(
       action = "input",
       style = list(textAlign = "center"),
-      message = add_cell_message(type = "warning", message = "rec['Sepal.Width'] <= 3 ? 'NarrowSepal' : 'WideSepal';")
+      message = add_cell_message(
+        type = "warning",
+        message = "rec['Sepal.Width'] <= 3 ? 'NarrowSepal' : 'WideSepal';"
+      )
     )
   )
 )
