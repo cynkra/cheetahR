@@ -144,3 +144,6 @@ make_table_sortable <- function(columns, sortable = TRUE) {
   }
   columns
 }
+
+`%notin%` <- Negate('%in%')
+
