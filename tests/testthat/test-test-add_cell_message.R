@@ -24,5 +24,5 @@ test_that("add_cell_message generates correct JS function", {
 
   # Test: invalid type throws error
   expect_error(add_cell_message("critical", "Oops"),
-               "`type` must be one of")
+               "'arg' should be one of")
 })
