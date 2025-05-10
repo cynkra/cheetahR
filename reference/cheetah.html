@@ -42,10 +42,13 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cheetah</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  columns <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  column_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  elementId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rownames <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  rownames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  search <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"disabled"</span>, <span class="st">"exact"</span>, <span class="st">"contains"</span><span class="op">)</span>,</span>
+<span>  sortable <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -62,6 +65,10 @@
 <code><a href="column_def.html">column_def()</a></code>.</p></dd>
 
 
+<dt id="arg-column-group">column_group<a class="anchor" aria-label="anchor" href="#arg-column-group"></a></dt>
+<dd><p>A list of column groups. Each group can be customized using</p></dd>
+
+
 <dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
 <dd><p>Width of the widget</p></dd>
 
@@ -76,6 +83,16 @@
 
 <dt id="arg-rownames">rownames<a class="anchor" aria-label="anchor" href="#arg-rownames"></a></dt>
 <dd><p>Logical. Whether to show rownames. Defaults to TRUE.</p></dd>
+
+
+<dt id="arg-search">search<a class="anchor" aria-label="anchor" href="#arg-search"></a></dt>
+<dd><p>Whether to enable a search field on top of the table.
+Default to <code>disabled</code>. Use <code>exact</code> for exact matching
+or <code>contains</code> to get larger matches.</p></dd>
+
+
+<dt id="arg-sortable">sortable<a class="anchor" aria-label="anchor" href="#arg-sortable"></a></dt>
+<dd><p>Logical. Whether to enable sorting on all columns. Defaults to TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">
