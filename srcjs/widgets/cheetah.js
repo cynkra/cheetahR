@@ -1,5 +1,5 @@
 import 'widgets';
-import { asHeader } from '../modules/header.js';
+import { combineColumnsAndGroups } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
 
 HTMLWidgets.widget({
@@ -31,18 +31,86 @@ HTMLWidgets.widget({
             ...(userMap[item.field] || {})
           }));
 
+          // Iterate over the list and process the `action` property if it is not null or undefined
+          columns.forEach((obj) => {
+            if (obj.action != null) {  // Checks for both null and undefined
+              if (obj.action.type === "inline_menu") {
+                obj.columnType = new cheetahGrid.columns.type.MenuColumn({
+                  options: obj.action.options,
+                });
+
+                obj.action = new cheetahGrid.columns.action.InlineMenuEditor({
+                  options: obj.action.options,
+                });
+              }
+            }
+          });
+
         } else {
-          columns = defaultCol
+          columns = defaultCol;
+        }
+
+        if (x.colGroup !== null) {
+          columns = combineColumnsAndGroups(columns, x.colGroup);
         }
 
         const grid = new cheetahGrid.ListGrid({
           parentElement: document.getElementById(id),
           header: columns,
-          // Array data to be displayed on the grid
-          records: x.data,
           // Column fixed position
           // frozenColCount: 1,
         });
+
+        // Search feature
+        if (x.search !== 'disabled') {
+          const filterDataSource = new cheetahGrid
+            .data
+            .FilterDataSource(
+              cheetahGrid.data.DataSource.ofArray(x.data)
+            );
+          grid.dataSource = filterDataSource;
+
+          const widget = document.getElementById(el.id);
+          const label = document.createElement('label');
+          label.textContent = 'Filter:';
+          // Create input
+          const input = document.createElement('input');
+          input.id = `${el.id}-filter-input`;
+          input.style.margin = '10px';
+          widget.prepend(label, input);
+
+          const filterInput = document.getElementById(`${el.id}-filter-input`);
+          filterInput.addEventListener('input', (e) => {
+            const filterValue = document.getElementById(e.currentTarget.id).value;
+            filterDataSource.filter = filterValue
+              ? (record) => {
+                // filtering method
+                for (const k in record) {
+                  let testCond;
+                  switch (x.search) {
+                    case 'contains':
+                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;;
+                      break;
+                    case 'exact':
+                      let r = new RegExp(`^${filterValue}$`);
+                      testCond = r.test(`${record[k]}`);
+                      break;
+                    default:
+                      console.log(`${x.search} value not implemented yet.`);
+                  }
+                  if (testCond) {
+                    return true;
+                  }
+                }
+                return false;
+              }
+              : null;
+            grid.invalidate();
+          })
+        } else {
+          // Array data to be displayed on the grid
+          grid.records = x.data;
+        }
 
         // Only is Shiny exists
         if (HTMLWidgets.shinyMode) {

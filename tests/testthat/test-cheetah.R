@@ -30,4 +30,8 @@ test_that("test cheetah", {
   shiny::testServer(server, {
     expect_s3_class(session$getOutput("grid"), "json")
   })
+
+  expect_snapshot(error = TRUE, {
+    cheetah(iris, search = "plop")
+  })
 })

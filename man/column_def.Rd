@@ -11,7 +11,10 @@ column_def(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
-  style = NULL
+  menu_options = NULL,
+  style = NULL,
+  message = NULL,
+  sort = FALSE
 )
 }
 \arguments{
@@ -23,27 +26,47 @@ column_def(
 
 \item{max_width}{Column max width.}
 
-\item{column_type}{Column type. There are 6 possible options:
+\item{column_type}{Column type. By default, the column type is inferred from the data type of the column.
+There are 7 possible options:
 \itemize{
 \item \code{"text"} for text columns.
 \item \code{"number"} for numeric columns.
 \item \code{"check"} for check columns.
 \item \code{"image"} for image columns.
 \item \code{"radio"} for radio columns.
-\item \code{"multilinetext"} for multiline text in columns.
+\item \code{"multilinetext"} for multiline text columns.
+\item \code{"menu"} for menu selection columns. If \code{column_type == "menu"},
+action parameter must be set to "inline_menu" and menu_options must be provided.
+Note: Works efficiently only in shiny.
 }}
 
 \item{action}{The action property defines column actions. Select
-the appropriate Action class for the column type. For instance,
-if the column type is \code{"text"}, the action can be \code{"input"}.
-There are 3 supported actions:
+the appropriate Action class for the column type.
 \itemize{
 \item \code{"input"} for input action columns.
 \item \code{"check"} for check action columns.
 \item \code{"radio"} for radio action columns.
+\item \code{"inline_menu"} for menu selection columns.
 }}
 
+\item{menu_options}{A list of menu options when using \code{column_type = "menu"}.
+Each option should be a list with \code{value} and \code{label} elements.
+The menu options must be a list of lists, each containing a \code{value}
+and \code{label} element.
+The \code{label} element is the label that will be displayed in the menu.}
+
 \item{style}{Column style.}
+
+\item{message}{Cell message. Expect a \code{\link[htmlwidgets:JS]{htmlwidgets::JS()}} function that
+takes \code{rec} as argument. It must return an object with two properties: \code{type} for the message
+type (\code{"info"}, \code{"warning"}, \code{"error"}) and the \code{message} that holds the text to display.
+The latter can leverage a JavaScript ternary operator involving \verb{rec.<COLNAME>} (\code{COLNAME} being the name
+of the column for which we define the message) to check whether the predicate function is TRUE. You can also
+use \code{add_cell_message()} to generated the expected JS expression.
+See details for example of usage.}
+
+\item{sort}{Whether to sort the column. Default to FALSE. May also be
+a JS callback to create custom logic (does not work yet).}
 }
 \value{
 A list of column options to pass to the JavaScript API.
@@ -51,4 +74,45 @@ A list of column options to pass to the JavaScript API.
 \description{
 Needed by \link{cheetah} to customize
 columns individually.
+}
+\details{
+\subsection{Cell messages}{
+
+When you write a message, you can pass a function like so:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  <COLNAME> = column_def(
+    action = "input",
+     message = JS(
+      "function(rec) \{
+         return \{
+           //info message
+           type: 'info',
+           message: rec.<COLNAME> ? null : 'Please check.',
+         \}
+       \}")
+    )
+}\if{html}{\out{</div>}}
+
+Or use \code{add_cell_message()}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  <COLNAME> = column_def(
+    action = "input",
+     message = add_cell_message(type = "info", message = "Ok")
+    )
+}\if{html}{\out{</div>}}
+
+See \code{\link[=add_cell_message]{add_cell_message()}} for more details.
+}
+}
+\examples{
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  )
+)
+
 }

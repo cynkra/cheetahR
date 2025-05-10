@@ -12,11 +12,12 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(dplyr)
 ```
 
 ```{r setup}
 library(cheetahR)
+library(palmerpenguins)
+library(dplyr)
 ```
 
 ## Your first table
@@ -66,6 +67,7 @@ The `column_type` parameter in `column_def()` allows you to specify different ty
 - `"image"`: For image columns
 - `"radio"`: For radio button columns
 - `"multilinetext"`: For multiline text columns
+- `"menu"`: For dropdown menu selection columns
 
 The `column_type` parameter is optional. If it is not specified, the column type will be inferred from the data type.
 
@@ -91,3 +93,440 @@ head(airquality, 10) %>%
     )
   )
 ```
+Note! The check column is not clickable. This is because a corresponding value of "check" is required for the action parameter to activate the interactivity of the column.
+
+## Defining the column actions
+
+The `action` parameter in `column_def()` allows you to define interactive behaviors for columns. There are 4 possible actions:
+
+- `"input"`: Makes the column editable with text input
+- `"check"`: Makes the column editable with checkboxes 
+- `"radio"`: Makes the column editable with radio buttons
+- `"inline_menu"`: Makes the column editable with a dropdown menu (requires `column_type = "menu"` and `menu_options`)
+
+The action type must be compatible with the column type. For example, `"check"` action can only be used with `"check"` column type.
+```{r}
+head(airquality, 10) %>%
+  mutate(
+    has_na = if_any(everything(), is.na),
+    has_na = ifelse(has_na, "true", "false"),
+    .before = 1
+  ) %>%
+  cheetah(
+    columns = list(
+      has_na = column_def(
+        name = "Contains NA",
+        column_type = "check",
+        action = "check",
+        style = list(
+          uncheckBgColor = "#FDD",
+          checkBgColor = "rgb(255, 73, 72)",
+          borderColor = "red"
+        )
+      )
+    )
+  )
+```
+
+### Adding image to the table
+
+The `cheetah` widget supports displaying images in table cells by setting `column_type = "image"`. You can customize how images are displayed using style properties like `imageSizing`.
+```{r}
+img_url <- c(
+"https://assets.shannons.com.au/JD166AU033OKSAEF/Z8E73PWLE94D365M/7g7i8dxq4xdx0g61-me9867ab4krp0uio/jpg/2000x1500x3/vehicle/1973-mazda-rx4.jpg",
+"https://live.staticflickr.com/2529/3854349010_4783baf575_o.jpg",
+"https://photos.classiccars.com/cc-temp/listing/129/6646/18583131-1974-datsun-710-std.jpg",
+"https://tse2.mm.bing.net/th?id=OIP.qV1ZAVktze35RwUpEgtPmwAAAA&pid=Api&P=0&h=180",
+"https://tse1.mm.bing.net/th?id=OIP.OA_V14TTdu8nx36mC6VUeAHaEo&pid=Api&P=0&h=180",
+"https://res.cloudinary.com/carsguide/image/upload/f_auto,fl_lossy,q_auto,t_cg_hero_low/v1/editorial/dp/albums/album-3483/lg/Valiant-50-years-_6_.jpg"
+)
+```
+
+```{r, fig.height=3}
+data <- mutate(head(mtcars), image = img_url, .before = 1) 
+cheetah(
+  data,
+  columns = list(
+    rownames = column_def(width = 150),
+    image = column_def("images", width = 100, column_type = "image", style = list(imageSizing = "keep-aspect-ratio" ))
+  )
+)
+```
+
+
+## Cell messages
+
+There are two ways to add __cell messages__ for validation
+
+1. Define __cell messages__ by passing a JS function wrapped within `htmlwidget::JS()`. This function takes a single
+parameter `rec` which refers to data row. It must return an object with 2 properties:
+
+- `type`: the message type. Valid types are `"info"`, `"warning"` and `"error"`.
+- `message`: the message content. As shown below, you can use a [__ternary operator__](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator) to check whether a condition is respected, for instance `rec.Species === 'setosa'` check if the recorded specie is `"setosa"`. Since `rec` refers to an entire data row, you can also target multiple columns in your check logic.
+
+```{r}
+cheetah(
+  iris,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = htmlwidgets::JS(
+        "function(rec) {
+          return {
+            type: 'error',
+            message: rec.Species === 'setosa' ? 'Invalid specie type.' : null,
+          }
+        }"
+      )
+    )
+  )
+)
+```
+
+2. Using `add_cell_message()`. A R helper function which provides a simpler interface to create cell messages. The function takes two arguments:
+
+- `type`: Message type (`"error"`, `"warning"`, or `"info"`). Defaults to `"error"`.
+- `message`: A string or JavaScript expression. If the message contains `rec.`, `?`, `:`, or ends with `;`, it is treated as raw JavaScript. Otherwise, it is escaped and wrapped in quotes.
+
+Here are some examples:
+
+```{r}
+# Prepare data
+set.seed(123)
+iris_rows <- sample(nrow(iris), 10)
+data <- iris[iris_rows, ]
+```
+
+```{r}
+# Simple cell message
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(type = "info", message = "Ok")
+    )
+  )
+)
+```
+
+### Cell message using `js_ifelse()`
+
+The `js_ifelse()` helper function provides a convenient way to write conditional JavaScript expressions in R. It follows the same syntax as R's `ifelse()` function but generates JavaScript code for use in cell messages. See possible examples:
+
+#### 1. Simple logic: numeric comparisons and equality
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(message = js_ifelse(Species == "setosa", "", "Invalid"))
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(Sepal.Length > 5, "BigSepal", "")
+      )
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(Sepal.Width <= 3, "NarrowSepal", "WideSepal")
+      )
+    )
+  )
+)
+```
+
+#### 2. Combined logic
+```{r}
+`%notin%` <- Negate('%in%')
+
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(Sepal.Length > 5 & Species %notin% c("setosa"), "E", "X")
+      )
+    )
+  )
+)
+```
+
+#### 3. Basic `%in%`  and  `%notin%`
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        message = js_ifelse(Species %in% c("setosa", "virginica"), "Bad")
+      )
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(Species %notin% c("setosa"), "OK")
+      )
+    )
+  )
+)
+```
+
+#### 4. Using `grepl()` and `!grepl()`
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(grepl("^vir", Species), "Yes")
+      )
+    )
+  )
+)
+```
+```{r}
+cheetah(
+  data,
+  columns = list(
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(!grepl("set", Species), "NoSet", "")
+      )
+    )
+  )
+)
+```
+
+#### 5. Truthiness of a bare variable
+
+The `js_ifelse()` function can check the truthiness of a variable directly, similar to JavaScript's truthy/falsy behavior. Empty strings, `NA`, `null`, and `undefined` are considered falsy values, while non-empty strings and other values are considered truthy. This is useful for simple existence checks.
+```{r}
+# Add an extra column to the data
+check <-
+  c(
+    "", NA,
+    "ok", NA,
+    "good", "",
+    "", "good",
+    "ok", "better"
+  )
+
+data <- mutate(data, Check = check, .before = 1)
+
+cheetah(
+  data,
+  columns = list(
+    Check = column_def(
+      name = "",
+      column_type = "check",
+      action = "check",
+      message = add_cell_message(
+        message = js_ifelse(Check, if_false = "Please check.")
+      )
+    )
+  )
+)
+```
+
+
+### Cell message using raw JS expression as string
+
+Finally, within `add_cell_message()` you can pass raw JavaScript expressions as strings to the `message` option. In this case, you can either pass the JavaScript string directly or wrap it in `htmlwidgets::JS()`. The JavaScript expression should evaluate to a string that will be displayed as the message.
+```{r}
+cheetah(
+  data[,-1],
+  columns = list(
+    Sepal.Width = column_def(
+      action = "input",
+      style = list(textAlign = "center"),
+      message = add_cell_message(
+        type = "warning",
+        message = "rec['Sepal.Width'] <= 3 ? 'NarrowSepal' : 'WideSepal';"
+      )
+    )
+  )
+)
+```
+
+
+## Sorting options in cheetahR
+
+By default a cheetahR table is sortable. Otherwise, set `sortable = FALSE` in `cheetah()` to disable this functionality:
+```{r, eval=TRUE}
+cheetah(mtcars, rownames = FALSE, sortable = FALSE)
+```
+
+
+However, to indivdually control the sorting option of each columns in the table, pass `sort = TRUE` to the `column_def()`:
+
+```{r}
+cheetah(
+  mtcars,
+  sortable = FALSE,
+  columns = list(
+    rownames = column_def(
+      width = 150,
+      sort = TRUE
+    )
+  )
+)
+```
+
+
+### Coming soon (TBD)
+
+If you want finer control over the sorting logic and provide your own, you can pass a `htmlwidgets::JS` callback instead:
+
+```{r}
+cheetah(
+  mtcars,
+  sortable = FALSE,
+  columns = list(
+    rownames = column_def(
+      width = 150,
+      sort = htmlwidgets::JS(
+        "function(order, col, grid) {
+          // your logic
+        }"
+      )
+    )
+  )
+)
+```
+
+## Column Grouping
+
+cheetahR allows you to group related columns together under a common header using `column_group()`. This creates a hierarchical structure in your table headers, making it easier to organize and understand related data.
+
+To group columns, use the `column_group()` function to define each group and specify which columns belong to it. Then pass the list of column groups to the `column_group` parameter in `cheetah()`.
+
+Here's an example grouping the Sepal and Petal measurements in the iris dataset:
+```{r}
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  ),
+  column_group = list(
+    column_group(
+      name = "Sepal",
+      columns = c("Sepal.Length", "Sepal.Width"),
+      header_style = list(textAlign = "center", bgColor = "#fbd4dd")
+    ),
+    column_group(
+      name = "Petal",
+      columns = c("Petal.Length", "Petal.Width"),
+      header_style = list(textAlign = "center", bgColor = "#d8edfc")
+    )
+  )
+)
+```
+
+## Filtering data
+
+You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
+
+```{r}
+cheetah(penguins, search = "contains")
+```
+
+<br/>
+
+
+## `cheetah()` usage in Shiny
+cheetahR works seamlessly in a Shiny app. You can use it in both the UI and server components. In the UI, simply call `cheetahR::cheetahOutput()` to create a placeholder for the grid. In the server, use `cheetahR::renderCheetah()` to render the grid with your data and options.
+
+The grid will automatically update when the underlying data changes, making it perfect for reactive applications. All features like filtering, sorting, and custom column definitions work exactly the same way as in standalone R usage.
+
+
+One special feature that works particularly well in Shiny is the `menu` column type, which allows users to select from predefined options in a dropdown menu. This is ideal for interactive data editing workflows.
+
+## Menu column in Shiny
+By default, `cheetah()` automatically detects any "factor" columns in your data and converts them into menu columns. A menu column displays a dropdown menu with predefined options that users can select from. This is particularly useful when you want to restrict input to a specific set of valid choices. For example, if you have a factor column with levels "Low", "Medium", and "High", it will be displayed as a dropdown menu with these three options.
+```{r, eval=FALSE}
+library(shiny)
+library(bslib)
+library(cheetahR)
+
+
+ui <- page_fluid(cheetahOutput("grid"))
+
+server <- function(input, output) {
+  output$grid <- renderCheetah({
+    cheetah(data = iris)
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+![Default menu column sample 1](figures/default_menucolumn_img_1.png)
+
+![Default menu column sample 2](figures/default_menucolumn_img_2.png)
+
+### Customizing the 'menu options'
+```{r, eval=FALSE}
+library(shiny)
+library(bslib)
+library(cheetahR)
+
+ui <- page_fluid(cheetahOutput("grid"))
+
+server <- function(input, output) {
+  output$grid <- renderCheetah({
+    cheetah(data = iris,
+            columns = list(
+              Species = column_def(
+                column_type = "menu",
+                action = "inline_menu",
+                menu_options = list(
+                  setosa = "Option Setosa",
+                  versicolor = "Option Vericolor" ,
+                  virginica = "Option Virginica"
+                )
+              )
+            )
+          )
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+![Customized menu column sample ](figures/customized_menucolumn_img.png)

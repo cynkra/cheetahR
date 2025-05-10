@@ -7,10 +7,13 @@
 cheetah(
   data,
   columns = NULL,
+  column_group = NULL,
   width = NULL,
   height = NULL,
   elementId = NULL,
-  rownames = TRUE
+  rownames = TRUE,
+  search = c("disabled", "exact", "contains"),
+  sortable = TRUE
 )
 }
 \arguments{
@@ -19,6 +22,8 @@ cheetah(
 \item{columns}{A list of column definitions. Each column can be customized using
 \code{column_def()}.}
 
+\item{column_group}{A list of column groups. Each group can be customized using}
+
 \item{width}{Width of the widget}
 
 \item{height}{Height of the widget}
@@ -26,6 +31,12 @@ cheetah(
 \item{elementId}{The element ID for the widget}
 
 \item{rownames}{Logical. Whether to show rownames. Defaults to TRUE.}
+
+\item{search}{Whether to enable a search field on top of the table.
+Default to \code{disabled}. Use \code{exact} for exact matching
+or \code{contains} to get larger matches.}
+
+\item{sortable}{Logical. Whether to enable sorting on all columns. Defaults to TRUE.}
 }
 \value{
 An HTML widget object of class 'cheetah' that can be:

@@ -5,10 +5,15 @@
 #' @param data A data frame or matrix to display
 #' @param columns A list of column definitions. Each column can be customized using
 #'   \code{column_def()}.
+#' @param column_group A list of column groups. Each group can be customized using
 #' @param width Width of the widget
 #' @param height Height of the widget
 #' @param elementId The element ID for the widget
 #' @param rownames Logical. Whether to show rownames. Defaults to TRUE.
+#' @param search Whether to enable a search field on top of the table.
+#' Default to `disabled`. Use `exact` for exact matching
+#' or `contains` to get larger matches.
+#' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
 #'
 #' @return An HTML widget object of class 'cheetah' that can be:
 #'   \itemize{
@@ -26,11 +31,15 @@
 cheetah <- function(
   data,
   columns = NULL,
+  column_group = NULL,
   width = NULL,
   height = NULL,
   elementId = NULL,
-  rownames = TRUE
+  rownames = TRUE,
+  search = c("disabled", "exact", "contains"),
+  sortable = TRUE
 ) {
+  search <- match.arg(search)
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
   processed_rn <- process_rownames(data, columns, rownames)
 
@@ -42,14 +51,21 @@ cheetah <- function(
       is_named_list(columns) & names(columns) %in% colnames(data)
   )
 
+  stopifnot(
+    "If not NULL, `column_groups` must be a named list or list of named lists" =
+      is.null(columns) |
+      is_named_list(column_group) |
+      all(unlist(lapply(column_group, is_named_list)))
+  )
+
   columns <-
     update_col_list_with_classes(data, columns) %>%
-      add_field_to_list() %>%
-      toJSON(auto_unbox = TRUE)
+    make_table_sortable(sortable = sortable) %>%
+    add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
-  x = list(data = data_json, columns = columns)
+  x <- list(data = data_json, columns = columns, colGroup = column_group, search = search)
 
   # create widget
   htmlwidgets::createWidget(
