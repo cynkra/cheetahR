@@ -14,7 +14,14 @@
 #' Default to `disabled`. Use `exact` for exact matching
 #' or `contains` to get larger matches.
 #' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
-#'
+#' @param resizable Logical. Whether to enable column resizing. Defaults to TRUE.
+#' @param column_freeze Integer. The number of columns to freeze from the left.
+#' @param defaultRowHeight Integer. The default row height.
+#' @param defaultColWidth Integer. The default column width.
+#' @param theme The theme to use for the widget. Coming soon.
+#' @param background_color The background color of the widget.
+#' @param allow_range_paste Logical. Whether to allow range pasting. Defaults to FALSE.
+#' @param keyOptions A list of key options. Coming soon.
 #' @return An HTML widget object of class 'cheetah' that can be:
 #'   \itemize{
 #'     \item Rendered in R Markdown documents
@@ -37,7 +44,16 @@ cheetah <- function(
   elementId = NULL,
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
-  sortable = TRUE
+  sortable = TRUE,
+  resizable = TRUE,
+  column_freeze = NULL,
+  default_row_height = NULL,
+  default_col_width = NULL,
+  theme = NULL,
+  font = NULL,
+  background_color = NULL,
+  allow_range_paste = FALSE,
+  key_options = NULL
 ) {
   search <- match.arg(search)
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
@@ -65,7 +81,22 @@ cheetah <- function(
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
-  x <- list(data = data_json, columns = columns, colGroup = column_group, search = search)
+  x <-
+    dropNulls(list(
+      data = data_json,
+      columns = columns,
+      colGroup = column_group,
+      search = search,
+      disableColumnResize = resizable,
+      frozenColCount = column_freeze,
+      defaultRowHeight = default_row_height,
+      defaultColWidth = default_col_width,
+      theme = theme,
+      font = font,
+      underlayBackgroundColor = background_color,
+      allowRangePaste = allow_range_paste,
+      keyOptions = key_options
+    ))
 
   # create widget
   htmlwidgets::createWidget(

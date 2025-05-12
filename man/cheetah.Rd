@@ -13,7 +13,16 @@ cheetah(
   elementId = NULL,
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
-  sortable = TRUE
+  sortable = TRUE,
+  resizable = TRUE,
+  column_freeze = NULL,
+  default_row_height = NULL,
+  default_col_width = NULL,
+  theme = NULL,
+  font = NULL,
+  background_color = NULL,
+  allow_range_paste = FALSE,
+  key_options = NULL
 )
 }
 \arguments{
@@ -37,6 +46,22 @@ Default to \code{disabled}. Use \code{exact} for exact matching
 or \code{contains} to get larger matches.}
 
 \item{sortable}{Logical. Whether to enable sorting on all columns. Defaults to TRUE.}
+
+\item{resizable}{Logical. Whether to enable column resizing. Defaults to TRUE.}
+
+\item{column_freeze}{Integer. The number of columns to freeze from the left.}
+
+\item{theme}{The theme to use for the widget. Coming soon.}
+
+\item{background_color}{The background color of the widget.}
+
+\item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.}
+
+\item{defaultRowHeight}{Integer. The default row height.}
+
+\item{defaultColWidth}{Integer. The default column width.}
+
+\item{keyOptions}{A list of key options. Coming soon.}
 }
 \value{
 An HTML widget object of class 'cheetah' that can be:
