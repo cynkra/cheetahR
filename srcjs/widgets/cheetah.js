@@ -89,7 +89,7 @@ HTMLWidgets.widget({
                   let testCond;
                   switch (x.search) {
                     case 'contains':
-                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;;
+                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;
                       break;
                     case 'exact':
                       let r = new RegExp(`^${filterValue}$`);
