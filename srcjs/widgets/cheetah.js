@@ -1,5 +1,5 @@
 import 'widgets';
-import { combineColumnsAndGroups } from '../modules/utils.js';
+import { combineColumnsAndGroups, isDefined } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
 
 HTMLWidgets.widget({
@@ -54,12 +54,24 @@ HTMLWidgets.widget({
           columns = combineColumnsAndGroups(columns, x.colGroup);
         }
 
-        const grid = new cheetahGrid.ListGrid({
+        // Create grid configuration object with only defined options
+        const gridConfig = {
           parentElement: document.getElementById(id),
-          header: columns,
-          // Column fixed position
-          // frozenColCount: 1,
-        });
+          header: columns
+        };
+
+        // Only add options if they are defined
+        if (isDefined(x.disableColumnResize)) gridConfig.disableColumnResize = x.disableColumnResize;
+        if (isDefined(x.frozenColCount)) gridConfig.frozenColCount = x.frozenColCount;
+        if (isDefined(x.defaultRowHeight)) gridConfig.defaultRowHeight = x.defaultRowHeight;
+        if (isDefined(x.defaultColWidth)) gridConfig.defaultColWidth = x.defaultColWidth;
+        if (isDefined(x.theme)) gridConfig.theme = x.theme;
+        if (isDefined(x.font)) gridConfig.font = x.font;
+        if (isDefined(x.underlayBackgroundColor)) gridConfig.underlayBackgroundColor = x.underlayBackgroundColor;
+        if (isDefined(x.allowRangePaste)) gridConfig.allowRangePaste = x.allowRangePaste;
+        // if (isDefined(x.keyOptions)) gridConfig.keyOptions = x.keyOptions;
+
+        const grid = new cheetahGrid.ListGrid(gridConfig);
 
         // Search feature
         if (x.search !== 'disabled') {
