@@ -14,10 +14,11 @@ cheetah(
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
   sortable = TRUE,
-  resizable = TRUE,
+  disable_column_resize = FALSE,
   column_freeze = NULL,
   default_row_height = NULL,
   default_col_width = NULL,
+  header_row_height = NULL,
   theme = NULL,
   font = NULL,
   background_color = NULL,
@@ -47,19 +48,21 @@ or \code{contains} to get larger matches.}
 
 \item{sortable}{Logical. Whether to enable sorting on all columns. Defaults to TRUE.}
 
-\item{resizable}{Logical. Whether to enable column resizing. Defaults to TRUE.}
+\item{disable_column_resize}{Logical. Whether to disable column resizing. Defaults to FALSE.}
 
 \item{column_freeze}{Integer. The number of columns to freeze from the left.}
+
+\item{default_row_height}{Integer. The default row height.}
+
+\item{default_col_width}{Integer. The default column width.}
+
+\item{header_row_height}{Integer. The header row height.}
 
 \item{theme}{The theme to use for the widget. Coming soon.}
 
 \item{background_color}{The background color of the widget.}
 
 \item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.}
-
-\item{defaultRowHeight}{Integer. The default row height.}
-
-\item{defaultColWidth}{Integer. The default column width.}
 
 \item{keyOptions}{A list of key options. Coming soon.}
 }

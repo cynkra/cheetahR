@@ -16,8 +16,8 @@
 #' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
 #' @param disable_column_resize Logical. Whether to disable column resizing. Defaults to FALSE.
 #' @param column_freeze Integer. The number of columns to freeze from the left.
-#' @param defaultRowHeight Integer. The default row height.
-#' @param defaultColWidth Integer. The default column width.
+#' @param default_row_height Integer. The default row height.
+#' @param default_col_width Integer. The default column width.
 #' @param header_row_height Integer. The header row height.
 #' @param theme The theme to use for the widget. Coming soon.
 #' @param background_color The background color of the widget.
