@@ -14,7 +14,7 @@
 #' Default to `disabled`. Use `exact` for exact matching
 #' or `contains` to get larger matches.
 #' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
-#' @param resizable Logical. Whether to enable column resizing. Defaults to TRUE.
+#' @param disable_column_resize Logical. Whether to disable column resizing. Defaults to FALSE.
 #' @param column_freeze Integer. The number of columns to freeze from the left.
 #' @param defaultRowHeight Integer. The default row height.
 #' @param defaultColWidth Integer. The default column width.
@@ -45,7 +45,7 @@ cheetah <- function(
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
   sortable = TRUE,
-  resizable = TRUE,
+  disable_column_resize = FALSE,
   column_freeze = NULL,
   default_row_height = NULL,
   default_col_width = NULL,
@@ -87,7 +87,7 @@ cheetah <- function(
       columns = columns,
       colGroup = column_group,
       search = search,
-      disableColumnResize = resizable,
+      disableColumnResize = disable_column_resize,
       frozenColCount = column_freeze,
       defaultRowHeight = default_row_height,
       defaultColWidth = default_col_width,
