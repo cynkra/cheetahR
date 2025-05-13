@@ -50,9 +50,7 @@ HTMLWidgets.widget({
           columns = defaultCol;
         }
 
-        if (x.colGroup !== null) {
-          columns = combineColumnsAndGroups(columns, x.colGroup);
-        }
+        if (isDefined(x.colGroup)) columns = combineColumnsAndGroups(columns, x.colGroup);
 
         // Create grid configuration object with only defined options
         const gridConfig = {
