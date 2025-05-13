@@ -18,6 +18,7 @@
 #' @param column_freeze Integer. The number of columns to freeze from the left.
 #' @param defaultRowHeight Integer. The default row height.
 #' @param defaultColWidth Integer. The default column width.
+#' @param header_row_height Integer. The header row height.
 #' @param theme The theme to use for the widget. Coming soon.
 #' @param background_color The background color of the widget.
 #' @param allow_range_paste Logical. Whether to allow range pasting. Defaults to FALSE.
@@ -49,6 +50,7 @@ cheetah <- function(
   column_freeze = NULL,
   default_row_height = NULL,
   default_col_width = NULL,
+  header_row_height = NULL,
   theme = NULL,
   font = NULL,
   background_color = NULL,
@@ -91,6 +93,7 @@ cheetah <- function(
       frozenColCount = column_freeze,
       defaultRowHeight = default_row_height,
       defaultColWidth = default_col_width,
+      headerRowHeight =  header_row_height,
       theme = theme,
       font = font,
       underlayBackgroundColor = background_color,

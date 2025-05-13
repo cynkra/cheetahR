@@ -63,6 +63,7 @@ HTMLWidgets.widget({
         if (isDefined(x.frozenColCount)) gridConfig.frozenColCount = x.frozenColCount;
         if (isDefined(x.defaultRowHeight)) gridConfig.defaultRowHeight = x.defaultRowHeight;
         if (isDefined(x.defaultColWidth)) gridConfig.defaultColWidth = x.defaultColWidth;
+        if (isDefined(x.headerRowHeight)) gridConfig.headerRowHeight = x.headerRowHeight;
         if (isDefined(x.theme)) gridConfig.theme = x.theme;
         if (isDefined(x.font)) gridConfig.font = x.font;
         if (isDefined(x.underlayBackgroundColor)) gridConfig.underlayBackgroundColor = x.underlayBackgroundColor;
