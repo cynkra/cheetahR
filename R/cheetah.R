@@ -14,6 +14,7 @@
 #' Default to `disabled`. Use `exact` for exact matching
 #' or `contains` to get larger matches.
 #' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
+#' @param editable Logical. Whether to enable cell editing. Defaults to FALSE.
 #' @param disable_column_resize Logical. Whether to disable column resizing. Defaults to FALSE.
 #' @param column_freeze Integer. The number of columns to freeze from the left.
 #' @param default_row_height Integer. The default row height.
@@ -46,6 +47,7 @@ cheetah <- function(
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
   sortable = TRUE,
+  editable = FALSE,
   disable_column_resize = FALSE,
   column_freeze = NULL,
   default_row_height = NULL,
@@ -79,6 +81,7 @@ cheetah <- function(
   columns <-
     update_col_list_with_classes(data, columns) %>%
     make_table_sortable(sortable = sortable) %>%
+    make_table_editable(editable = editable) %>%
     auto_set_column_width(default_col_width = default_col_width) %>%
     add_field_to_list()
 
