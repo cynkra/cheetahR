@@ -20,10 +20,21 @@
 #' @param default_row_height Integer. The default row height.
 #' @param default_col_width Integer. The default column width.
 #' @param header_row_height Integer. The header row height.
-#' @param theme The theme to use for the widget. Coming soon.
-#' @param background_color The background color of the widget.
+#' @param theme The theme to use for the widget. Provide a named list of valid styling options to customize the widget.
+#' For possible options, see \link{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}
+#' @param font A String. The font to use for the widget. This is possible to set a font value according
+#' to the standard CSS font properties shorthand declaration. For example, `font = "12px Arial, sans-serif"`.
+#' This means that the font size is 12px, the font family is Arial, and the font weight is normal.
+#' @param underlay_background_color The underlay background color of the widget.
 #' @param allow_range_paste Logical. Whether to allow range pasting. Defaults to FALSE.
-#' @param keyOptions A list of key options. Coming soon.
+#' @param keyboard_options A named list of keyboard options. There are four options:
+#' \itemize{
+#'   \item `moveCellOnTab`. Set to `TRUE` to enable cell movement by Tab key.
+#'   \item `moveCellOnEnter`. Set to `TRUE` to enable cell movement by Enter key.
+#'   \item `deleteCellValueOnDel`. Set to `TRUE` to enable deletion of cell values with the Delete and BackSpace keys.
+#'   Note that this will only work if `editable` is `TRUE` or a given column is editable.
+#'   \item `selectAllOnCtrlA`. Set to `TRUE` to enable select all cells by 'Ctrl + A key.
+#' }
 #' @return An HTML widget object of class 'cheetah' that can be:
 #'   \itemize{
 #'     \item Rendered in R Markdown documents
@@ -55,11 +66,21 @@ cheetah <- function(
   header_row_height = NULL,
   theme = NULL,
   font = NULL,
-  background_color = NULL,
+  underlay_babackground_color = NULL,
   allow_range_paste = FALSE,
-  key_options = NULL
+  keyboard_options = NULL
 ) {
   search <- match.arg(search)
+
+  stopifnot(
+    "`keyboard_options` must be a named list" =
+      is.null(keyboard_options) |
+      is_named_list(keyboard_options)
+  )
+  stopifnot("`theme` must be a named list" =
+    is.null(theme) |
+    is_named_list(theme)
+  )
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
   processed_rn <- process_rownames(data, columns, rownames)
 
@@ -100,9 +121,9 @@ cheetah <- function(
       headerRowHeight =  header_row_height,
       theme = theme,
       font = font,
-      underlayBackgroundColor = background_color,
+      underlayBackgroundColor = underlay_babackground_color,
       allowRangePaste = allow_range_paste,
-      keyOptions = key_options
+      keyboardOptions = keyboard_options
     ))
 
   # create widget

@@ -14,6 +14,7 @@ cheetah(
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
   sortable = TRUE,
+  editable = FALSE,
   disable_column_resize = FALSE,
   column_freeze = NULL,
   default_row_height = NULL,
@@ -21,9 +22,9 @@ cheetah(
   header_row_height = NULL,
   theme = NULL,
   font = NULL,
-  background_color = NULL,
+  underlay_babackground_color = NULL,
   allow_range_paste = FALSE,
-  key_options = NULL
+  keyboard_options = NULL
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ or \code{contains} to get larger matches.}
 
 \item{sortable}{Logical. Whether to enable sorting on all columns. Defaults to TRUE.}
 
+\item{editable}{Logical. Whether to enable cell editing. Defaults to FALSE.}
+
 \item{disable_column_resize}{Logical. Whether to disable column resizing. Defaults to FALSE.}
 
 \item{column_freeze}{Integer. The number of columns to freeze from the left.}
@@ -58,13 +61,25 @@ or \code{contains} to get larger matches.}
 
 \item{header_row_height}{Integer. The header row height.}
 
-\item{theme}{The theme to use for the widget. Coming soon.}
+\item{theme}{The theme to use for the widget. Provide a named list of valid styling options to customize the widget.
+For possible options, see \link{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}}
 
-\item{background_color}{The background color of the widget.}
+\item{font}{A String. The font to use for the widget. This is possible to set a font value according
+to the standard CSS font properties shorthand declaration. For example, \code{font = "12px Arial, sans-serif"}.
+This means that the font size is 12px, the font family is Arial, and the font weight is normal.}
 
 \item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.}
 
-\item{keyOptions}{A list of key options. Coming soon.}
+\item{keyboard_options}{A named list of keyboard options. There are four options:
+\itemize{
+\item \code{moveCellOnTab}. Set to \code{TRUE} to enable cell movement by Tab key.
+\item \code{moveCellOnEnter}. Set to \code{TRUE} to enable cell movement by Enter key.
+\item \code{deleteCellValueOnDel}. Set to \code{TRUE} to enable deletion of cell values with the Delete and BackSpace keys.
+Note that this will only work if \code{editable} is \code{TRUE} or a given column is editable.
+\item \code{selectAllOnCtrlA}. Set to \code{TRUE} to enable select all cells by 'Ctrl + A key.
+}}
+
+\item{underlay_background_color}{The underlay background color of the widget.}
 }
 \value{
 An HTML widget object of class 'cheetah' that can be:

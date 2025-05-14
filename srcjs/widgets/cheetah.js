@@ -68,7 +68,7 @@ HTMLWidgets.widget({
         if (isDefined(x.font)) gridConfig.font = x.font;
         if (isDefined(x.underlayBackgroundColor)) gridConfig.underlayBackgroundColor = x.underlayBackgroundColor;
         if (isDefined(x.allowRangePaste)) gridConfig.allowRangePaste = x.allowRangePaste;
-        // if (isDefined(x.keyOptions)) gridConfig.keyOptions = x.keyOptions;
+        if (isDefined(x.keyboardOptions)) gridConfig.keyboardOptions = x.keyboardOptions;
 
         const grid = new cheetahGrid.ListGrid(gridConfig);
 
