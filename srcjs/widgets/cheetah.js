@@ -18,7 +18,7 @@ HTMLWidgets.widget({
         let columns;
         const header = Object.keys(x.data[0])
         const defaultCol = header.map((key) => {
-          return ({ field: key, caption: key, width: 'auto' });
+          return ({ field: key, caption: key});
         });
 
         if (x.columns !== null) {

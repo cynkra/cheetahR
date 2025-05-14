@@ -79,6 +79,7 @@ cheetah <- function(
   columns <-
     update_col_list_with_classes(data, columns) %>%
     make_table_sortable(sortable = sortable) %>%
+    auto_set_column_width(default_col_width = default_col_width) %>%
     add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")

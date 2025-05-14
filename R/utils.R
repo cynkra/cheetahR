@@ -144,3 +144,13 @@ make_table_sortable <- function(columns, sortable = TRUE) {
   }
   columns
 }
+
+auto_set_column_width <- function(columns, default_col_width = NULL) {
+  for (col_name in names(columns)) {
+    browser()
+    if (is.null(columns[[col_name]]$width) && is.null(default_col_width)) {
+      columns[[col_name]]$width <- 'auto'
+    }
+  }
+  columns
+}
