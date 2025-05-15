@@ -167,3 +167,6 @@ make_table_editable <- function(columns, editable = FALSE) {
   }
   columns
 }
+
+`%notin%` <- Negate('%in%')
+

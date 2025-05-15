@@ -23,10 +23,11 @@ js_ifelse <- function(condition, if_true = "", if_false = "") {
       var   <- parts[2]
       neg   <- !is.na(parts[3]) && nzchar(parts[3])
       vals  <- strsplit(parts[4], ",")[[1]]
-      vals  <- trimws(gsub("^['\"]|['\"]$", "", vals))
+      # Trim only whitespace, leave the single quotes intact:
+      vals  <- trimws(vals)
 
-      # build a single-quoted JS array literal
-      arr   <- sprintf("['%s']", paste(vals, collapse = "','"))
+      # Paste them back together (they already have their single quotes):
+      arr   <- sprintf("[%s]", paste(vals, collapse = ","))
       expr  <- sprintf("%s.includes(rec['%s'])", arr, var)
       if (neg) expr <- paste0("!", expr)
 

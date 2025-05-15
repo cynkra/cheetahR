@@ -1,6 +1,6 @@
 Package: cheetahR
 Title: High Performance Tables Using 'Cheetah Grid'
-Version: 0.1.0
+Version: 0.2.0
 License: GPL (>= 3)
 Authors@R: c(
     person("Olajoke", "Oladipo", , "olajoke@cynkra.com", role = c("aut", "cre")),

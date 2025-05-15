@@ -26,7 +26,7 @@ test_that("js_ifelse conversion", {
   # Basic %in%  and  %notin%
   expect_equal(
     js_ifelse(Species %in% c("setosa", "virginica"), "Bad", ""),
-    "['setosa',''virginica'].includes(rec['Species']) ? 'Bad' : null;"
+    "['setosa','virginica'].includes(rec['Species']) ? 'Bad' : null;"
   )
   expect_equal(
     js_ifelse(Species %notin% c("setosa"), "OK", ""),
