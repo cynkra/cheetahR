@@ -43,6 +43,62 @@
 #'   }
 #'   The widget renders as an HTML table with all specified customizations.
 #'
+#' @examples
+#' # Basic usage
+#' cheetah(iris)
+#'
+#' # Customize columns
+#' cheetah(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = column_def(name = "Length"),
+#'     Sepal.Width = column_def(name = "Width"),
+#'     Petal.Length = column_def(name = "Length"),
+#'     Petal.Width = column_def(name = "Width")
+#'   )
+#' )
+#'
+#' # Customize rownames
+#' cheetah(
+#'   mtcars,
+#'   columns = list(
+#'     rownames = column_def(width = 150, style = list(color = "red"))
+#'   )
+#' )
+#'
+#' # Customize column groups
+#' cheetah(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = column_def(name = "Length"),
+#'     Sepal.Width = column_def(name = "Width"),
+#'     Petal.Length = column_def(name = "Length"),
+#'     Petal.Width = column_def(name = "Width")
+#'   ),
+#'   column_group = list(
+#'     column_group(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+#'     column_group(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+#'   )
+#' )
+#'
+#' # Enable search
+#' cheetah(iris, search = "contains")
+#'
+#' # Enable sorting
+#' cheetah(iris, sortable = TRUE)
+#'
+#' # Enable cell editing
+#' cheetah(iris, editable = TRUE)
+#'
+#' # Disable column resizing
+#' cheetah(iris, disable_column_resize = TRUE)
+#'
+#' # Freeze columns
+#' cheetah(iris, column_freeze = 2)
+#'
+#' # Set default row height
+#' cheetah(iris, default_row_height = 30)
+#'
 #' @import htmlwidgets
 #' @import jsonlite
 #' @import tibble

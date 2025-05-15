@@ -22,7 +22,7 @@ cheetah(
   header_row_height = NULL,
   theme = NULL,
   font = NULL,
-  underlay_babackground_color = NULL,
+  underlay_background_color = NULL,
   allow_range_paste = FALSE,
   keyboard_options = NULL
 )
@@ -68,6 +68,8 @@ For possible options, see \link{https://future-architect.github.io/cheetah-grid/
 to the standard CSS font properties shorthand declaration. For example, \code{font = "12px Arial, sans-serif"}.
 This means that the font size is 12px, the font family is Arial, and the font weight is normal.}
 
+\item{underlay_background_color}{The underlay background color of the widget.}
+
 \item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.}
 
 \item{keyboard_options}{A named list of keyboard options. There are four options:
@@ -78,8 +80,6 @@ This means that the font size is 12px, the font family is Arial, and the font we
 Note that this will only work if \code{editable} is \code{TRUE} or a given column is editable.
 \item \code{selectAllOnCtrlA}. Set to \code{TRUE} to enable select all cells by 'Ctrl + A key.
 }}
-
-\item{underlay_background_color}{The underlay background color of the widget.}
 }
 \value{
 An HTML widget object of class 'cheetah' that can be:
@@ -92,4 +92,61 @@ The widget renders as an HTML table with all specified customizations.
 }
 \description{
 Creates a high-performance table widget using Cheetah Grid.
+}
+\examples{
+# Basic usage
+cheetah(iris)
+
+# Customize columns
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  )
+)
+
+# Customize rownames
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(width = 150, style = list(color = "red"))
+  )
+)
+
+# Customize column groups
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  ),
+  column_group = list(
+    column_group(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    column_group(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
+
+# Enable search
+cheetah(iris, search = "contains")
+
+# Enable sorting
+cheetah(iris, sortable = TRUE)
+
+# Enable cell editing
+cheetah(iris, editable = TRUE)
+
+# Disable column resizing
+cheetah(iris, disable_column_resize = TRUE)
+
+# Freeze columns
+cheetah(iris, column_freeze = 2)
+
+# Set default row height
+cheetah(iris, default_row_height = 30)
+
 }
