@@ -66,7 +66,7 @@ cheetah <- function(
   header_row_height = NULL,
   theme = NULL,
   font = NULL,
-  underlay_babackground_color = NULL,
+  underlay_background_color = NULL,
   allow_range_paste = FALSE,
   keyboard_options = NULL
 ) {
@@ -121,7 +121,7 @@ cheetah <- function(
       headerRowHeight =  header_row_height,
       theme = theme,
       font = font,
-      underlayBackgroundColor = underlay_babackground_color,
+      underlayBackgroundColor = underlay_background_color,
       allowRangePaste = allow_range_paste,
       keyboardOptions = keyboard_options
     ))
