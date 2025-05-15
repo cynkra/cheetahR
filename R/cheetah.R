@@ -21,7 +21,7 @@
 #' @param default_col_width Integer. The default column width.
 #' @param header_row_height Integer. The header row height.
 #' @param theme The theme to use for the widget. Provide a named list of valid styling options to customize the widget.
-#' For possible options, see \link{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}
+#' For possible options, see \href{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}{Extend Theme in Cheetah Grid}
 #' @param font A String. The font to use for the widget. This is possible to set a font value according
 #' to the standard CSS font properties shorthand declaration. For example, `font = "12px Arial, sans-serif"`.
 #' This means that the font size is 12px, the font family is Arial, and the font weight is normal.

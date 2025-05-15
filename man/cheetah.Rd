@@ -62,7 +62,7 @@ or \code{contains} to get larger matches.}
 \item{header_row_height}{Integer. The header row height.}
 
 \item{theme}{The theme to use for the widget. Provide a named list of valid styling options to customize the widget.
-For possible options, see \link{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}}
+For possible options, see \href{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}{Extend Theme in Cheetah Grid}}
 
 \item{font}{A String. The font to use for the widget. This is possible to set a font value according
 to the standard CSS font properties shorthand declaration. For example, \code{font = "12px Arial, sans-serif"}.
