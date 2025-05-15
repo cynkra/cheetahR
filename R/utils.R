@@ -156,7 +156,6 @@ auto_set_column_width <- function(columns, default_col_width = NULL) {
 
 # TODO: Default only allow numeric values in a numeric columns
 make_table_editable <- function(columns, editable = FALSE) {
-  browser()
   if (!editable) {
     return(columns)
   } else {
