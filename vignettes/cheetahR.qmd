@@ -10,6 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
   comment = "#>"
 )
 ```
@@ -257,8 +259,6 @@ cheetah(
 
 #### 2. Combined logic
 ```{r}
-`%notin%` <- Negate('%in%')
-
 cheetah(
   data,
   columns = list(
@@ -460,6 +460,93 @@ cheetah(
 )
 ```
 
+
+## Extending the `theme` option in a cheetah table
+
+The `theme` parameter allows you to extensively customize the visual appearance of your cheetah table by providing a named list of styling options. You can modify colors, borders, fonts and other visual properties.
+
+Here's an example showing some theme customizations:
+```{r}
+# Define a named list of styles
+user_theme <- list(
+  color = "#2c3e50",
+  frozenRowsColor = "#2c3e50",
+  defaultBgColor = "#ecf0f1",
+  frozenRowsBgColor = "#bdc3c7",
+  selectionBgColor = "#d0ece7",
+  highlightBgColor = "#f9e79f",
+  underlayBackgroundColor = "#f4f6f7",
+  # This is also possible to change the theme apply in the state by using callback.
+  frozenRowsBorderColor = '
+  function(args) {
+   const { row, grid: { frozenRowCount } } = args;
+    if (frozenRowCount - 1 === row) {
+     return ["#7f8c8d", "#7f8c8d", "#34495e"];
+    } else {
+     return "#7f8c8d";
+    }
+  }',
+  borderColor = '
+  function(args) {
+   const { col, grid: { colCount } } = args;
+    if (colCount - 1 === col) {
+     return ["#34495e", "#7f8c8d", "#34495e", null];
+    } else {
+     return ["#34495e", null, "#34495e", null];
+    }
+  }',
+  highlightBorderColor = "#1abc9c",
+  checkbox = list(
+    uncheckBgColor = "#ecf0f1",
+    checkBgColor = "#1abc9c",
+    borderColor = "#16a085"
+  ),
+  font = "14px 'Helvetica Neue', sans-serif",
+  header = list(sortArrowColor = "#2980b9"),
+  messages = list(
+    infoBgColor = "#95a5a6",
+    errorBgColor = "#e74c3c",
+    warnBgColor = "#f1c40f",
+    boxWidth = 12,
+    markHeight = 15
+  )
+)
+```
+
+Apply the custom theme to the table:
+```{r}
+cheetah(
+  data,
+  theme = user_theme,
+  columns = list(
+    Check = column_def(
+      name = "",
+      column_type = "check",
+      action = "check",
+      message = add_cell_message(
+        message = js_ifelse(Check, if_false = "Please check.")
+      )
+    ),
+    Petal.Width = column_def(
+      action = "input",
+      style = list(textAlign = "center"),
+      message = add_cell_message(
+        type = "info",
+        message = js_ifelse(Petal.Width <= 1, "NarrowPetal", "WidePetal")
+      )
+    ),
+    Species = column_def(
+      action = "input",
+      message = add_cell_message(
+        type = "warning",
+        message = js_ifelse(!grepl("set", Species), "NoSet", "")
+      )
+    )
+  )
+)
+```
+
+
 ## Filtering data
 
 You can filter data by setting `search` to either `exact` or `contains` when you call `cheetah()` like so:
@@ -470,6 +557,74 @@ cheetah(penguins, search = "contains")
 
 <br/>
 
+
+## Further customizing options
+
+The `cheetah()` function provides several additional options to customize the grid's appearance and behavior:
+
+- `disable_column_resize`: Prevent users from resizing columns 
+```{r}
+# Disable resize effect in a cheetah table
+cheetah(penguins, search = "contains", disable_column_resize = TRUE)
+```
+
+<br/>
+
+- `column_freeze`: Freeze a number of columns from the left
+```{r}
+# Freeze the first column
+cheetah(penguins, search = "contains", column_freeze = 1)
+```
+
+<br/>
+
+- `default_row_height` and `default_col_width`: Set default sizes for rows and columns
+```{r}
+# Define default row height and column width
+cheetah(penguins, search = "contains", default_row_height = 30, default_col_width = 100)
+```
+
+<br/>
+
+- `header_row_height`: Customize the height of the header row
+```{r}
+# Define default row height for the header
+cheetah(penguins, search = "contains", header_row_height = 20)
+```
+
+<br/>
+
+- `font`: Set custom font properties according to the standard CSS shorthand declaration for font settings.
+```{r}
+# Define a default font setting for the table
+cheetah(penguins, search = "contains", font = "8px sans-serif")
+```
+
+<br/>
+
+- `editable`: Enable or disable cell editing in the grid. When set to `TRUE`, users can double-click cells to edit their values.
+```{r}
+# Make the table editable
+cheetah(penguins, search = "contains", editable = TRUE)
+```
+
+<br/>
+
+- `keyboard_options`: Configure keyboard navigation and shortcuts
+```{r}
+# Move cells on tab and delete cell values on with the Delete and BackSpace keys
+cheetah(
+  penguins,
+  search = "contains",
+  editable = TRUE,
+  keyboard_options =
+    list(
+      deleteCellValueOnDel = TRUE,
+      moveCellOnTab = TRUE
+    )
+)
+```
+Note: To active `deleteCellValueOnDel`, ensure `editable = TRUE` or a specified column is editable.
 
 ## `cheetah()` usage in Shiny
 cheetahR works seamlessly in a Shiny app. You can use it in both the UI and server components. In the UI, simply call `cheetahR::cheetahOutput()` to create a placeholder for the grid. In the server, use `cheetahR::renderCheetah()` to render the grid with your data and options.
