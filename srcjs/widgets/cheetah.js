@@ -11,6 +11,7 @@ HTMLWidgets.widget({
   factory: function (el, width, height) {
 
     let id = el.id;
+    let grid;
 
     return {
 
@@ -70,7 +71,7 @@ HTMLWidgets.widget({
         if (isDefined(x.allowRangePaste)) gridConfig.allowRangePaste = x.allowRangePaste;
         if (isDefined(x.keyboardOptions)) gridConfig.keyboardOptions = x.keyboardOptions;
 
-        const grid = new cheetahGrid.ListGrid(gridConfig);
+        grid = new cheetahGrid.ListGrid(gridConfig);
 
         // Search feature
         if (x.search !== 'disabled') {
@@ -144,6 +145,9 @@ HTMLWidgets.widget({
         }
       },
 
+      getGrid: function() {
+        return grid;
+      },
       resize: function (width, height) {
 
         // TODO: code to re-render the widget with a new size
