@@ -27,6 +27,7 @@
 #' This means that the font size is 12px, the font family is Arial, and the font weight is normal.
 #' @param underlay_background_color The underlay background color of the widget.
 #' @param allow_range_paste Logical. Whether to allow range pasting. Defaults to FALSE.
+#' To activate this option set `editable = TRUE` or ensure a given column is editable.
 #' @param keyboard_options A named list of keyboard options. There are four options:
 #' \itemize{
 #'   \item `moveCellOnTab`. Set to `TRUE` to enable cell movement by Tab key.

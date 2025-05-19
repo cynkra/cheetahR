@@ -70,7 +70,8 @@ This means that the font size is 12px, the font family is Arial, and the font we
 
 \item{underlay_background_color}{The underlay background color of the widget.}
 
-\item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.}
+\item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.
+To activate this option set \code{editable = TRUE} or ensure a given column is editable.}
 
 \item{keyboard_options}{A named list of keyboard options. There are four options:
 \itemize{
