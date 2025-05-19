@@ -145,5 +145,28 @@ make_table_sortable <- function(columns, sortable = TRUE) {
   columns
 }
 
+auto_set_column_width <- function(columns, default_col_width = NULL) {
+  for (col_name in names(columns)) {
+    if (is.null(columns[[col_name]]$width) && is.null(default_col_width)) {
+      columns[[col_name]]$width <- 'auto'
+    }
+  }
+  columns
+}
+
+# TODO: Default only allow numeric values in a numeric columns
+make_table_editable <- function(columns, editable = FALSE) {
+  if (!editable) {
+    return(columns)
+  } else {
+    for (col_name in names(columns)) {
+      if (is.null(columns[[col_name]]$action) && !(col_name %in% c(" ", "rownames"))) {
+        columns[[col_name]]$action <- 'input'
+      }
+    }
+  }
+  columns
+}
+
 `%notin%` <- Negate('%in%')
 

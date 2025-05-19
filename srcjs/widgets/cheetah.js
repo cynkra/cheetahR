@@ -1,5 +1,5 @@
 import 'widgets';
-import { combineColumnsAndGroups } from '../modules/utils.js';
+import { combineColumnsAndGroups, isDefined } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
 
 HTMLWidgets.widget({
@@ -18,7 +18,7 @@ HTMLWidgets.widget({
         let columns;
         const header = Object.keys(x.data[0])
         const defaultCol = header.map((key) => {
-          return ({ field: key, caption: key, width: 'auto' });
+          return ({ field: key, caption: key});
         });
 
         if (x.columns !== null) {
@@ -50,16 +50,27 @@ HTMLWidgets.widget({
           columns = defaultCol;
         }
 
-        if (x.colGroup !== null) {
-          columns = combineColumnsAndGroups(columns, x.colGroup);
-        }
+        if (isDefined(x.colGroup)) columns = combineColumnsAndGroups(columns, x.colGroup);
 
-        const grid = new cheetahGrid.ListGrid({
+        // Create grid configuration object with only defined options
+        const gridConfig = {
           parentElement: document.getElementById(id),
-          header: columns,
-          // Column fixed position
-          // frozenColCount: 1,
-        });
+          header: columns
+        };
+
+        // Only add options if they are defined
+        if (isDefined(x.disableColumnResize)) gridConfig.disableColumnResize = x.disableColumnResize;
+        if (isDefined(x.frozenColCount)) gridConfig.frozenColCount = x.frozenColCount;
+        if (isDefined(x.defaultRowHeight)) gridConfig.defaultRowHeight = x.defaultRowHeight;
+        if (isDefined(x.defaultColWidth)) gridConfig.defaultColWidth = x.defaultColWidth;
+        if (isDefined(x.headerRowHeight)) gridConfig.headerRowHeight = x.headerRowHeight;
+        if (isDefined(x.theme)) gridConfig.theme = x.theme;
+        if (isDefined(x.font)) gridConfig.font = x.font;
+        if (isDefined(x.underlayBackgroundColor)) gridConfig.underlayBackgroundColor = x.underlayBackgroundColor;
+        if (isDefined(x.allowRangePaste)) gridConfig.allowRangePaste = x.allowRangePaste;
+        if (isDefined(x.keyboardOptions)) gridConfig.keyboardOptions = x.keyboardOptions;
+
+        const grid = new cheetahGrid.ListGrid(gridConfig);
 
         // Search feature
         if (x.search !== 'disabled') {
@@ -89,7 +100,7 @@ HTMLWidgets.widget({
                   let testCond;
                   switch (x.search) {
                     case 'contains':
-                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;;
+                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;
                       break;
                     case 'exact':
                       let r = new RegExp(`^${filterValue}$`);
