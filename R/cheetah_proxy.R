@@ -1,13 +1,10 @@
 call_proxy_action <- function(proxy, method, args = list()) {
-  if (!inherits(proxy, "cheetahProxy")) {
-    stop("proxy must be a cheetahProxy object")
+  if (!inherits(proxy, "cheetah_proxy")) {
+    stop("proxy must be a cheetah_proxy object")
   }
 
-  msg <- list(id = proxy$id, call = list(method = method, args = args))
-
-  sess <- proxy$session
-  sess$sendCustomMessage("cheetah-proxy-actions", msg)
-
+  msg <- list(id = proxy$id, method = method, call = list(args = args))
+  proxy$session$sendCustomMessage("cheetah-proxy-actions", msg)
   proxy
 }
 
@@ -24,45 +21,37 @@ call_proxy_action <- function(proxy, method, args = list()) {
 #' @export
 cheetah_proxy <- function(outputId, session = shiny::getDefaultReactiveDomain()) {
   if (is.null(session)) {
-    stop("cheetahProxy must be called from the server function of a Shiny app")
+    stop("cheetah_proxy() can only be called from the server function of a Shiny app")
   }
 
-  proxy <-
-    list(
-      id = session$ns(outputId),
-      rawId = outputId,
-      session = session
-    )
+  proxy <- list(
+    id = session$ns(outputId),
+    session = session
+  )
 
-  class(proxy) <- "cheetahProxy"
-
+  class(proxy) <- "cheetah_proxy"
   proxy
 }
-
 
 #' Update the data in a cheetah grid
 #'
 #' Updates the data in a cheetah grid widget without redrawing the entire widget.
 #'
-#' @param proxy A proxy object created by `cheetahProxy()`.
+#' @param proxy A proxy object created by `cheetah_proxy()`.
 #' @param data The new data to display in the grid.
 #'
 #' @export
-updateCheetahData <- function(proxy, data) {
+update_data <- function(proxy, data) {
   stopifnot("'data' must be a dataframe" = is.data.frame(data))
-
   data_json <- jsonlite::toJSON(data, dataframe = "rows")
-  call_proxy_action(proxy, "addRow", list(
-    id = proxy$id,
-    data = data_json
-  ))
+  call_proxy_action(proxy, "updateData", list(data = data_json))
 }
 
 #' Add a row to a cheetah table
 #'
 #' Adds a new row to a cheetah grid widget without redrawing the entire widget.
 #'
-#' @param proxy A proxy object created by `cheetahProxy()`.
+#' @param proxy A proxy object created by `cheetah_proxy()`.
 #' @param data A single row dataframe for the new row in the table
 #'
 #' @export
@@ -76,12 +65,11 @@ add_row <- function(proxy, data) {
   call_proxy_action(proxy, "addRow", list(data = data_json))
 }
 
-
 #' Update a row in a cheetah grid
 #'
 #' Updates an existing row in a cheetah grid widget without redrawing the entire widget.
 #'
-#' @param proxy A proxy object created by `cheetahProxy()`.
+#' @param proxy A proxy object created by `cheetah_proxy()`.
 #' @param row_index A numeric value representing the index of the row to update.
 #' @param data A single row dataframe to update the row.
 #'
@@ -104,14 +92,11 @@ update_row <- function(proxy, row_index, data) {
 #'
 #' Deletes a row from a cheetah grid widget without redrawing the entire widget.
 #'
-#' @param proxy A proxy object created by `cheetahProxy()`.
+#' @param proxy A proxy object created by `cheetah_proxy()`.
 #' @param row_index A numeric value representing the index of the row to delete.
 #'
 #' @export
 delete_row <- function(proxy, row_index) {
   stopifnot("'row_index' must be numeric" = is.numeric(row_index))
-  call_proxy_action(proxy, "delete_row", list(
-    id = proxy$id,
-    rowIndex = row_index
-  ))
+  call_proxy_action(proxy, "deleteRow", list(rowIndex = row_index))
 }

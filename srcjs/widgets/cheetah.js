@@ -19,7 +19,7 @@ HTMLWidgets.widget({
         let columns;
         const header = Object.keys(x.data[0])
         const defaultCol = header.map((key) => {
-          return ({ field: key, caption: key});
+          return ({ field: key, caption: key });
         });
 
         if (x.columns !== null) {
@@ -118,13 +118,12 @@ HTMLWidgets.widget({
               }
               : null;
             grid.invalidate();
-          })
+          });
         } else {
-          // Array data to be displayed on the grid
-          grid.records = x.data;
+          grid.dataSource = cheetahGrid.data.DataSource.ofArray(x.data);
         }
 
-        // Only is Shiny exists
+        // Only if Shiny exists
         if (HTMLWidgets.shinyMode) {
           const {
             CLICK_CELL,
@@ -142,6 +141,34 @@ HTMLWidgets.widget({
               Shiny.setInputValue(`${id}_changed_value`, args);
             }
           );
+
+          // Handle proxy messages
+          Shiny.addCustomMessageHandler('cheetah-proxy-actions', function(msg) {
+            if (msg.id !== id) {
+              console.log("Couldn't find table with id " + id);
+              return;
+
+            }
+
+            const args = msg.call.args;
+
+            // Get the correct records array
+            let records = grid.dataSource._source;
+
+            switch (msg.method) {
+              case 'addRow':
+                records.push(args.data[0]);
+                grid.invalidate();
+                break;
+              case 'deleteRow':
+                const deleteIndex = args.rowIndex;
+                if (records[deleteIndex]) {
+                  records.splice(deleteIndex, 1);
+                  grid.invalidate();
+                }
+                break;
+            }
+          });
         }
       },
 
