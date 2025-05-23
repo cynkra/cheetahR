@@ -33,6 +33,20 @@ HTMLWidgets.widget({
 
           // Iterate over the list and process the `action` property if it is not null or undefined
           columns.forEach((obj) => {
+              // Number formatting logic
+
+              try {
+                if (isDefined(obj.columnType) && obj.columnType.initializeNumFormat) {
+                  const { locales, initializeNumFormat, ...numFormatOptions } = obj.columnType;
+
+                  obj.columnType = new cheetahGrid.columns.type.NumberColumn({
+                    format: new Intl.NumberFormat(locales, numFormatOptions)
+                  });
+                }
+              } catch (error) {
+                Shiny.notifications.show({ html: 'Error initializing number format', type: 'error' })
+              }
+
             if (obj.action != null) {  // Checks for both null and undefined
               if (obj.action.type === "inline_menu") {
                 obj.columnType = new cheetahGrid.columns.type.MenuColumn({

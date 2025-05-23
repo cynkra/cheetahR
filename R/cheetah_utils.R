@@ -174,3 +174,162 @@ column_group <- function(name = NULL, columns, header_style = NULL) {
     )
   )
 }
+
+
+#' Numeric Column formatter
+#'
+#' To add data formatting to a numeric type column.
+#'
+#' @param style The formatting style to use. Must be one of the following:
+#' \itemize{
+#'   \item `"decimal"` for plain number formatting action columns. Default.
+#'   \item `"currency"` for currency formatting
+#'   \item `"percent"` for percent formatting.
+#'   \item `"unit"` for unit formatting.
+#' }
+#' @param currency The ISO 4217 currency code to use for currency formatting. Must be provided if `style` is `"currency"`.
+#' @param currency_display The display format for the currency. Must be one of the following:
+#'   \itemize{
+#'     \item `"symbol"` for the currency symbol. Default. Use the localized currency symbol e.g. $ for USD.
+#'     \item `"code"` for the currency code. Use the ISO 4217 currency code e.g. USD for US Dollar.
+#'     \item `"narrowSymbol"` for the narrow currency symbol. Use the narrow currency symbol e.g. `$100` instead of `$USD100`.
+#'     \item `"name"` for the currency name. Use the localized currency name e.g. Dollar for USD.
+#'   }
+#' @param currency_sign The sign to use for the currency. Must be one of the following:
+#'   \itemize{
+#'     \item `"standard"` for the standard format. Default.
+#'     \item `"accounting"` for the accounting format. Use the accounting sign e.g. $100 instead of $USD100.
+#'   }
+#' @param unit The unit to use for the unit formatting. Must be provided if `style` is `"unit"`.
+#' @param unit_display The display format for the unit. Must be one of the following:
+#'   \itemize{
+#'     \item `"short"` for the short format. Default. E.g., 16 l
+#'     \item `"narrow"` for the narrow format. E.g., 16l
+#'     \item `"long"` for the long format. E.g., 16 liters
+#'   }
+#' @param locales A character vector of BCP 47 language tags (e.g. `"en-US"` for English,
+#'   `"ja-JP"` for Japanese) specifying the locales to use for number formatting.
+#'   If NULL, the runtime's default locale is used. See
+#'   [BCP 47 language tags](https://learn.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a)
+#'   for reference.
+#' @param locale_options A named list of options to customize the locale.
+#' @param digit_options A named list of options to customize the digit.
+#' @param other_options A named list of other options to customize the number formatting.
+#'  @note
+#'  Further details on customizing numeric formatting can be found in the
+#'  [Intl.NumberFormat documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters)
+#' @return A list containing number formatting options that can be used to format numeric data in a column.
+#' @examples
+#' data <- data.frame(
+#'   price_USD = c(125000.75, 299.99, 7890.45),
+#'   price_EUR = c(410.25, 18750.60, 1589342.80),
+#'   price_INR = c(2200.50, 134999.99, 945.75),
+#'   price_NGN = c(120000, 2100045, 1750),
+#'   liter = c(20, 35, 42),
+#'   percent = c(0.875, 0.642, 0.238)
+#' )
+#' 
+#' cheetah(
+#'   data,
+#'   columns = list(
+#'     price_USD = column_def(
+#'       name = "USD",
+#'       column_type = number_format(
+#'         style = "currency",
+#'         currency = "USD"
+#'       )
+#'     ),
+#'     price_EUR = column_def(
+#'       name = "EUR",
+#'       column_type = number_format(
+#'         style = "currency",
+#'         currency = "EUR",
+#'         locales = "de-DE"
+#'       )
+#'     ),
+#'     price_INR = column_def(
+#'       name = "INR",
+#'       column_type = number_format(
+#'         style = "currency",
+#'         currency = "INR",
+#'         locales = "hi-IN"
+#'       )
+#'     ),
+#'     price_NGN = column_def(
+#'       name = "NGN",
+#'       column_type = number_format(
+#'         style = "currency",
+#'         currency = "NGN"
+#'       )
+#'     ),
+#'     liter = column_def(
+#'       name = "Liter",
+#'       column_type = number_format(
+#'         style = "unit",
+#'         unit = "liter",
+#'         unit_display = "long"
+#'       )
+#'     ),
+#'     percent = column_def(
+#'       name = "Percent",
+#'       column_type = number_format(style = "percent")
+#'     )
+#'   )
+#' )
+#'
+#' @export
+number_format <- function(style = c("decimal", "currency", "percent", "unit"),
+                          currency = NULL,
+                          currency_display = c("symbol", "code", "narrowSymbol", "name"),
+                          currency_sign = c("standard", "accounting"),
+                          unit = NULL,
+                          unit_display = c("short", "narrow", "long"),
+                          locales = NULL,
+                          locale_options = NULL,
+                          digit_options = NULL,
+                          other_options = NULL) {
+  style <- match.arg(style)
+  currency_display <- match.arg(currency_display)
+  currency_sign <- match.arg(currency_sign)
+  unit_display <- match.arg(unit_display)
+
+  if (style == "currency" && is.null(currency)) {
+    stop("`currency` specify the ISO 4217 currency code.
+         E.g., 'USD' for US Dollar or 'EUR' for the euro")
+  }
+
+  if (style == "unit" && is.null(unit)) {
+    stop("`unit` specify the unit to use for the unit formatting.
+         E.g., 'liters' or 'kilograms'")
+  }
+
+  if (!is.null(locales) && !is.character(locales)) {
+    stop("`locales` must be a character string")
+  }
+
+  if (!is.null(locale_options) && !is_named_list(locale_options)) {
+    stop("`locale_options` must be a named list")
+  }
+
+  if (!is.null(digit_options) && !is_named_list(digit_options)) {
+    stop("`digit_options` must be a named list")
+  }
+
+  if (!is.null(other_options) && !is_named_list(other_options)) {
+    stop("`other_options` must be a named list")
+  }
+
+
+  params <- list(
+    style = style,
+    currency = currency,
+    currencyDisplay = currency_display,
+    currencySign = currency_sign,
+    unit = unit,
+    unitDisplay = unit_display,
+    locales = if (is.null(locales)) get_bcp47_locale(),
+    options = c(locale_options, digit_options, other_options)
+  )
+  params <- dropNulls(params)
+  structure(params, class = "numFormat")
+}

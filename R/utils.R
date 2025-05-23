@@ -69,6 +69,9 @@ column_style_check <- function(columns) {
 }
 
 check_column_type <- function(x) {
+
+  if (class(x) == "numFormat") return(invisible())
+
   av_options <-
     c("text", "check", "number", "radio", "image", "multilinetext", "menu")
 
@@ -88,6 +91,16 @@ update_col_list_with_classes <- function(data, col_list) {
   is_testing <- is_testing()
 
   for (col_name in names(col_classes)) {
+
+    if (class(col_list[[col_name]]$columnType)  == "numFormat") {
+      stopifnot(
+        "'number_format()' can only be applied to a numeric column type" =
+          col_classes[[col_name]] %in% c("numeric", "integer")
+      )
+      col_list[[col_name]]$columnType <- unclass(col_list[[col_name]]$columnType)
+      col_list[[col_name]]$columnType$initializeNumFormat <- TRUE
+    }
+
     if (is.null(col_list[[col_name]]$columnType)) {
       if (col_classes[[col_name]] %in% c("numeric", "integer")) {
         col_list[[col_name]]$columnType <- "number"
@@ -169,4 +182,27 @@ make_table_editable <- function(columns, editable = FALSE) {
 }
 
 `%notin%` <- Negate('%in%')
+
+get_bcp47_locale <- function() {
+  locale <- Sys.getlocale("LC_CTYPE")
+
+  # Extract language and region (e.g., from "en_US.UTF-8")
+  match <- regexec("^([a-zA-Z]{2})[_-]([a-zA-Z]{2})", locale)
+  parts <- regmatches(locale, match)[[1]]
+
+  if (length(parts) >= 3) {
+    lang <- tolower(parts[2])
+    region <- toupper(parts[3])
+    return(paste0(lang, "-", region))  # BCP 47 format: "en-US"
+  } else {
+    warning("Could not parse locale in BCP 47 format; returning fallback 'en-US'")
+    return("en-US")
+  }
+}
+
+
+
+
+
+
 
