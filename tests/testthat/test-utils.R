@@ -94,3 +94,19 @@ test_that("update_col_list_with_classes sets columnType correctly", {
   expect_equal(updated_col_list$gender$columnType, "menu")
   expect_equal(updated_col_list$gender$action$type, "inline_menu")
 })
+
+
+test_that("number_format() creates a numFormat S3 object with correct fields", {
+  fmt <- number_format(
+    locales = "ja-JP",
+    style = "currency",
+    currency = "JPY"
+  )
+  expect_s3_class(fmt, "numFormat")
+  expect_equal(fmt$locales, "ja-JP")
+  expect_equal(fmt$style, "currency")
+  expect_equal(fmt$currency, "JPY")
+
+  # Throws error for invalid input
+  expect_error(number_format(locales = 123), "character")
+})
