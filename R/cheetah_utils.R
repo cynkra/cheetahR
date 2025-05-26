@@ -327,7 +327,7 @@ number_format <- function(style = c("decimal", "currency", "percent", "unit"),
     currencySign = currency_sign,
     unit = unit,
     unitDisplay = unit_display,
-    locales = if (is.null(locales)) get_bcp47_locale(),
+    locales = if (is.null(locales)) get_bcp47_locale() else locales,
     options = c(locale_options, digit_options, other_options)
   )
   params <- dropNulls(params)
