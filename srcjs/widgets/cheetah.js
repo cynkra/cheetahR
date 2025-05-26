@@ -158,12 +158,14 @@ HTMLWidgets.widget({
             switch (msg.method) {
               case 'addRow':
                 records.push(args.data[0]);
+                grid.dataSource.length = grid.dataSource.length + 1;
                 grid.invalidate();
                 break;
               case 'deleteRow':
                 const deleteIndex = args.rowIndex;
                 if (records[deleteIndex]) {
                   records.splice(deleteIndex, 1);
+                  grid.dataSource.length = grid.dataSource.length - 1;
                   grid.invalidate();
                 }
                 break;
