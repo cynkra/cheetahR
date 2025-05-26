@@ -70,7 +70,7 @@ column_style_check <- function(columns) {
 
 check_column_type <- function(x) {
 
-  if (class(x) == "numFormat") return(invisible())
+  if (inherits(x, 'numFormat')) return(invisible())
 
   av_options <-
     c("text", "check", "number", "radio", "image", "multilinetext", "menu")
@@ -92,7 +92,7 @@ update_col_list_with_classes <- function(data, col_list) {
 
   for (col_name in names(col_classes)) {
 
-    if (class(col_list[[col_name]]$columnType)  == "numFormat") {
+    if (inherits(col_list[[col_name]]$columnType, 'numFormat')) {
       stopifnot(
         "'number_format()' can only be applied to a numeric column type" =
           col_classes[[col_name]] %in% c("numeric", "integer")
