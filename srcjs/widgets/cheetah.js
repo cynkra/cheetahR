@@ -17,7 +17,7 @@ HTMLWidgets.widget({
 
       renderValue: function (x, id = el.id) {
         let columns;
-        const header = Object.keys(x.data[0])
+        const header = Object.keys(x.data[0]);
         const defaultCol = header.map((key) => {
           return ({ field: key, caption: key });
         });
