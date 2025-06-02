@@ -132,13 +132,22 @@ HTMLWidgets.widget({
 
           grid.listen(
             CLICK_CELL, (...args) => {
-              Shiny.setInputValue(`${id}_click_cell`, args);
+              Shiny.setInputValue(`${id}_click_cell`, {
+                row: args[0].row,
+                col: args[0].col + 1 // Add +1 to correspond to R indexing system
+              });
             }
           );
 
           grid.listen(
             CHANGED_VALUE, (...args) => {
-              Shiny.setInputValue(`${id}_changed_value`, args);
+              Shiny.setInputValue(`${id}_changed_value`, {
+                row: args[0].row,
+                col: args[0].col + 1,
+                value: args[0].value,
+                oldValue: args[0].oldValue,
+                record: args[0].record
+              });
             }
           );
 
