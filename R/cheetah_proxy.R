@@ -62,6 +62,11 @@ add_row <- function(proxy, data) {
 #'
 #' @export
 delete_row <- function(proxy, row_index) {
-  stopifnot("'row_index' must be numeric" = is.numeric(row_index))
+  stopifnot("'row_index' must be a numeric value" =
+              !is.null(row_index) && is.numeric(row_index)
+            )
+
+  # Reduce row index by 1 to fit index system in JS
+  row_index <- row_index - 1
   call_proxy_action(proxy, "deleteRow", list(rowIndex = row_index))
 }
