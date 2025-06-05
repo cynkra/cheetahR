@@ -70,7 +70,16 @@ column_style_check <- function(columns) {
 
 check_column_type <- function(x) {
   av_options <-
-    c("text", "check", "number", "radio", "image", "multilinetext", "menu")
+    c(
+      "text",
+      "check",
+      "number",
+      "radio",
+      "image",
+      "multilinetext",
+      "menu",
+      "string"
+    )
 
   if (!is.null(x) && !(x %in% av_options)) {
     msg <- sprintf(
@@ -116,7 +125,7 @@ update_col_list_with_classes <- function(data, col_list) {
 check_action_type <- function(action = NULL, column_type = NULL) {
   if (is.null(action)) return(invisible())
 
-  valid_actions <- c("input", "check", "radio", "inline_menu")
+  valid_actions <- c("input", "check", "radio", "inline_menu", "autocomplete")
   if (!action %in% valid_actions) {
     stop(
       "Invalid action type. Must be one of: ",
@@ -160,7 +169,10 @@ make_table_editable <- function(columns, editable = FALSE) {
     return(columns)
   } else {
     for (col_name in names(columns)) {
-      if (is.null(columns[[col_name]]$action) && !(col_name %in% c(" ", "rownames"))) {
+      if (
+        is.null(columns[[col_name]]$action) &&
+          !(col_name %in% c(" ", "rownames"))
+      ) {
         columns[[col_name]]$action <- 'input'
       }
     }
@@ -169,4 +181,3 @@ make_table_editable <- function(columns, editable = FALSE) {
 }
 
 `%notin%` <- Negate('%in%')
-

@@ -90,6 +90,9 @@ column_def <- function(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
+  editable = TRUE,
+  editor_type = "autocomplete",
+  auto_complete_opts = NULL,
   menu_options = NULL,
   style = NULL,
   message = NULL,
@@ -115,6 +118,10 @@ column_def <- function(
     stop("message must be a JavaScript function wrapped by htmlwidgets::JS().")
   }
 
+  if (action == "autocomplete" && is.null(auto_complete_opts)) {
+    stop("If `action == 'autocomplete'`, auto_complete_opts must not be NULL")
+  }
+
   list(
     caption = name,
     width = width,
@@ -127,10 +134,16 @@ column_def <- function(
           type = action,
           options = menu_options
         )
+      } else if (action == "autocomplete") {
+        list(
+          type = action,
+          options = auto_complete_opts
+        )
       } else {
         action
       }
     },
+    editorType = editor_type,
     style = style,
     message = message,
     sort = sort
