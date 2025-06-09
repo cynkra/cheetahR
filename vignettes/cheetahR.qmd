@@ -383,7 +383,11 @@ cheetah(
 )
 ```
 
-## Numeric column formatting
+## Column Formatting in cheetah
+
+cheetah provides powerful column formatting capabilities through the JavaScript Intl API, allowing you to format numbers, dates, and other data types with locale-aware settings.
+
+### Numeric column formatting
 
 The `number_format()` helper function allows you to format numeric columns using the JavaScript `Intl.NumberFormat` API. This provides locale-aware number formatting with support for currencies, units, percentages and more.
 
@@ -443,6 +447,41 @@ cheetah(
     percent = column_def(
       name = "Percent",
       column_type = number_format(style = "percent")
+    )
+  )
+)
+```
+
+### Date column formatting
+
+Similar to number formatting, cheetahR provides a `date_format()` function to format date columns according to the locale-specific conventions. You can customize the display of date components like day, month, year, hour, minute, etc. and specify the locale:
+```{r}
+cheetah(
+  data.frame(
+    date = as.Date(c("2023-01-15", "2023-02-28", "2023-03-10")),
+    datetime = as.POSIXct(c(
+      "2023-01-15 09:30:00", 
+      "2023-02-28 14:45:00",
+      "2023-03-10 18:15:00"
+    ))
+  ),
+  columns = list(
+    date = column_def(
+      name = "Date",
+      column_type = date_format(
+        locales = "en-US",
+        month = "long",
+        day = "numeric",
+        year = "numeric"
+      )
+    ),
+    datetime = column_def(
+      name = "Date & Time",
+      column_type = date_format(
+        locales = "de-DE",
+        date_style = "full",
+        time_style = "medium"
+      )
     )
   )
 )

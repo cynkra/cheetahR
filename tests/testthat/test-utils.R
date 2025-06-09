@@ -110,3 +110,33 @@ test_that("number_format() creates a numFormat S3 object with correct fields", {
   # Throws error for invalid input
   expect_error(number_format(locales = 123), "character")
 })
+
+test_that("date_format() creates a dateFormatter S3 object with correct fields", {
+  # Test basic date formatting
+  fmt <- date_format(
+    locales = "en-US",
+    month = "long",
+    day = "numeric",
+    year = "numeric"
+  )
+  expect_s3_class(fmt, "dateFormatter")
+  expect_equal(fmt$locales, "en-US")
+  expect_equal(fmt$month, "long")
+  expect_equal(fmt$day, "numeric")
+  expect_equal(fmt$year, "numeric")
+
+  # Test with date/time styles
+  fmt2 <- date_format(
+    locales = "de-DE",
+    date_style = "full",
+    time_style = "medium"
+  )
+  expect_s3_class(fmt2, "dateFormatter")
+  expect_equal(fmt2$dateStyle, "full")
+  expect_equal(fmt2$timeStyle, "medium")
+  expect_null(fmt2$month) # Should be NULL when styles are used
+
+  # Test error handling
+  expect_error(date_format(hour12 = "yes"), "logical")
+  expect_error(date_format(locales_date_options = "not_a_list"), "named list")
+})
