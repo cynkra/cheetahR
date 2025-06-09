@@ -2,7 +2,8 @@
 % Please edit documentation in R/cheetah_utils.R
 \name{number_format}
 \alias{number_format}
-\title{Numeric Column formatter}
+\alias{date_format}
+\title{Column formatter}
 \usage{
 number_format(
   style = c("decimal", "currency", "percent", "unit"),
@@ -15,6 +16,24 @@ number_format(
   locale_options = NULL,
   digit_options = NULL,
   other_options = NULL
+)
+
+date_format(
+  locales = NULL,
+  day = c("numeric", "2-digit"),
+  year = c("numeric", "2-digit"),
+  hour = c("numeric", "2-digit"),
+  minute = c("numeric", "2-digit"),
+  second = c("numeric", "2-digit"),
+  month = c("numeric", "2-digit", "long", "short", "narrow"),
+  weekday = c("long", "short", "narrow"),
+  day_period = c("narrow", "long", "short"),
+  hour12 = FALSE,
+  time_zone = NULL,
+  date_style = c("none", "full", "long", "medium", "short"),
+  time_style = c("none", "full", "long", "medium", "short"),
+  more_date_options = NULL,
+  locales_date_options = NULL
 )
 }
 \arguments{
@@ -52,7 +71,7 @@ number_format(
 }}
 
 \item{locales}{A character vector of BCP 47 language tags (e.g. \code{"en-US"} for English,
-\code{"ja-JP"} for Japanese) specifying the locales to use for number formatting.
+\code{"ja-JP"} for Japanese) specifying the locales to use for formatting.
 If NULL, the runtime's default locale is used. See
 \href{https://learn.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a}{BCP 47 language tags}
 for reference.}
@@ -61,23 +80,48 @@ for reference.}
 
 \item{digit_options}{A named list of options to customize the digit.}
 
-\item{other_options}{A named list of other options to customize the number formatting.
+\item{other_options}{A named list of other options to customize the number formatting.}
+
+\item{day, month, year, hour, minute, second}{The format to use for the day, month,
+year, hour, minute, and second. The possible values are \code{"numeric"}, and \code{"2-digit"}
+except month, with more options i.e \code{"long"}, \code{"short"}, and \code{"narrow"}.
+Default for all is \code{"numeric"}.}
+
+\item{weekday, day_period}{The format to use for the weekday and day period.
+The possible values are \code{"long"}, \code{"short"}, and \code{"narrow"}.}
+
+\item{hour12}{Whether to use 12-hour time format or the 24-hour format. Default is FALSE.}
+
+\item{time_zone}{The time zone to use for the date formatting. E.g. \code{"America/New_York"}.}
+
+\item{date_style, time_style}{The format to use for the date and time styles.
+The available values are \code{"none"}, \code{"full"}, \code{"long"}, \code{"medium"}, and \code{"short"}.
+Note: date_style and time_style can be used together,
+but not with other date-time component options like weekday, hour, or month.}
+
+\item{more_date_options}{A named list of other options to customize the date formatting.}
+
+\item{locales_date_options}{A named list of options to customize the locales for the date.
 @note
 Further details on customizing numeric formatting can be found in the
-\href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters}{Intl.NumberFormat documentation}}
+\href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters}{Intl.NumberFormat documentation}.
+Further details on customizing date formatting can be found in the
+\href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat}{Intl.DateTimeFormat documentation}}
 }
 \value{
-A list containing number formatting options that can be used to format numeric data in a column.
+For \code{number_format()}: A list containing number formatting options that can be used to format numeric data in a column.
+For \code{date_format()}: A list containing date formatting options that can be used to format date data in a column.
 }
 \description{
-To add data formatting to a numeric type column.
+Format numeric and date columns using international formatting standards.
+Use \code{number_format()} to add data formatting to numeric columns and
+\code{date_format()} to format date columns according to the Intl.DateTimeFormat API.
 }
 \examples{
+# Number formatting examples
 data <- data.frame(
   price_USD = c(125000.75, 299.99, 7890.45),
   price_EUR = c(410.25, 18750.60, 1589342.80),
-  price_INR = c(2200.50, 134999.99, 945.75),
-  price_NGN = c(120000, 2100045, 1750),
   liter = c(20, 35, 42),
   percent = c(0.875, 0.642, 0.238)
 )
@@ -100,21 +144,6 @@ cheetah(
         locales = "de-DE"
       )
     ),
-    price_INR = column_def(
-      name = "INR",
-      column_type = number_format(
-        style = "currency",
-        currency = "INR",
-        locales = "hi-IN"
-      )
-    ),
-    price_NGN = column_def(
-      name = "NGN",
-      column_type = number_format(
-        style = "currency",
-        currency = "NGN"
-      )
-    ),
     liter = column_def(
       name = "Liter",
       column_type = number_format(
@@ -126,6 +155,26 @@ cheetah(
     percent = column_def(
       name = "Percent",
       column_type = number_format(style = "percent")
+    )
+  )
+)
+
+# Date formatting examples
+date_data <- data.frame(
+  date = as.Date(c("2024-01-01", "2024-01-02", "2024-01-03"))
+)
+
+cheetah(
+  date_data,
+  columns = list(
+    date = column_def(
+      name = "Date",
+      column_type = date_format(
+        locales = "en-US",
+        day = "2-digit",
+        month = "long",
+        year = "numeric"
+      )
     )
   )
 )
