@@ -456,6 +456,7 @@ cheetah(
 
 Similar to number formatting, cheetahR provides a `date_format()` function to format date columns according to the locale-specific conventions. You can customize the display of date components like day, month, year, hour, minute, etc. and specify the locale:
 ```{r}
+#| fig-height: 3
 cheetah(
   data.frame(
     date = as.Date(c("2023-01-15", "2023-02-28", "2023-03-10")),
