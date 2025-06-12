@@ -1,111 +1,176 @@
 import * as cheetahGrid from "cheetah-grid";
 
 export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEditor {
-  constructor(options) {
+  constructor(options = {}) {
     super(options);
     this.options = options.autocompleteOptions || [];
-    this.highlightedIndex = -1;
-    console.log('AutocompleteEditor initialized with options:', options);
+    this._filteredOptions = [];
+    this._dropdown = null;
+    this._input = null;
+    this._grid = null;
+    this._cell = null;
+    console.log('AutocompleteEditor initialized with options:', this.options);
   }
 
-  onInputCellInternal(inputElement, cellValue) {
-    super.onInputCellInternal(inputElement, cellValue);
+  clone() {
+    return new AutocompleteEditor({
+      autocompleteOptions: this.options,
+      classList: this._classList,
+      type: this._type,
+    });
+  }
 
-    // Add a unique id and name for accessibility
-    if (!inputElement.id) {
-      inputElement.id = 'autocomplete-input-' + Math.random().toString(36).substr(2, 9);
+  onInputCellInternal(grid, cell, inputValue) {
+    // get attaching container and position
+    const { element, rect } = grid.getAttachCellsArea(
+      grid.getCellRange(cell.col, cell.row)
+    );
+    // create and style input
+    const input = document.createElement("input");
+    input.type = this.type || "text";
+    // apply default InlineInputEditor attrs
+    super.onSetInputAttrsInternal(grid, cell, input);
+    input.style.position = "absolute";
+    input.style.top = `${rect.top.toFixed()}px`;
+    input.style.left = `${rect.left.toFixed()}px`;
+    input.style.width = `${rect.width.toFixed()}px`;
+    input.style.height = `${rect.height.toFixed()}px`;
+    input.style.font = grid.font || "16px sans-serif";
+    input.autocomplete = "off";
+    element.appendChild(input);
+    input.focus();
+    input.value = inputValue || "";
+
+    this._grid = grid;
+    this._cell = cell;
+    this._input = input;
+
+    input.addEventListener("input", () => this._onInput());
+    input.addEventListener("keydown", (e) => this._onKeyDown(e));
+  }
+
+  onOpenCellInternal(grid, cell) {
+    grid.doGetCellValue(cell.col, cell.row, (value) => {
+      this.onInputCellInternal(grid, cell, value);
+    });
+  }
+
+  onChangeSelectCellInternal(grid, cell, selected) {
+    super.onChangeSelectCellInternal(grid, cell, selected);
+    this._cleanup();
+  }
+
+  onGridScrollInternal(grid) {
+    super.onGridScrollInternal(grid);
+    this._cleanup();
+  }
+
+  onChangeDisabledInternal() {
+    super.onChangeDisabledInternal();
+    this._cleanup();
+  }
+
+  onChangeReadOnlyInternal() {
+    super.onChangeReadOnlyInternal();
+    this._cleanup();
+  }
+
+  _onInput() {
+    const value = this._input.value;
+    this._filteredOptions = this.options.filter(opt =>
+      opt.toLowerCase().includes(value.toLowerCase())
+    );
+    this._renderDropdown();
+  }
+
+  _onKeyDown(e) {
+    if (!this._dropdown) return;
+    const items = Array.from(this._dropdown.querySelectorAll("li"));
+    const active = this._dropdown.querySelector(".active");
+    let index = items.indexOf(active);
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        index = index < items.length - 1 ? index + 1 : 0;
+        this._highlight(items, index);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        index = index > 0 ? index - 1 : items.length - 1;
+        this._highlight(items, index);
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (active) this._selectOption(active.textContent);
+        break;
+      case "Escape":
+        this._cleanup();
+        break;
     }
-    inputElement.name = inputElement.id;
+  }
 
-    // Set initial value
-    inputElement.value = cellValue || '';
-    // Create suggestion box
-    const suggestionBox = document.createElement('div');
-    suggestionBox.style.position = 'absolute';
-    suggestionBox.style.top = '100%';
-    suggestionBox.style.left = '0';
-    suggestionBox.style.right = '0';
-    suggestionBox.style.border = '1px solid #ccc';
-    suggestionBox.style.background = '#fff';
-    suggestionBox.style.zIndex = '1000';
-    suggestionBox.style.maxHeight = '150px';
-    suggestionBox.style.overflowY = 'auto';
-    suggestionBox.style.display = 'none';
-    document.body.appendChild(suggestionBox);
+  _renderDropdown() {
+    this._cleanupDropdown();
+    if (!this._filteredOptions.length) return;
 
-    // Add input event listener
-    inputElement.addEventListener('input', () => {
-      const value = inputElement.value.toLowerCase();
-      suggestionBox.innerHTML = '';
-      if (!value) {
-        suggestionBox.style.display = 'none';
-        return;
-      }
-      const filtered = this.options.filter(opt => opt.toLowerCase().includes(value));
-      if (filtered.length === 0) {
-        suggestionBox.style.display = 'none';
-        return;
-      }
-      filtered.forEach((option, index) => {
-        const item = document.createElement('div');
-        item.textContent = option;
-        item.style.padding = '4px 8px';
-        item.style.cursor = 'pointer';
-        item.addEventListener('mousedown', () => {
-          inputElement.value = option;
-          suggestionBox.style.display = 'none';
-          inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-        item.addEventListener('mouseover', () => {
-          this.highlightedIndex = index;
-          highlightSuggestion();
-        });
-        suggestionBox.appendChild(item);
+    // position under input via getAttachCellsArea again
+    const { element, rect } = this._grid.getAttachCellsArea(
+      this._grid.getCellRange(this._cell.col, this._cell.row)
+    );
+
+    const dropdown = document.createElement("ul");
+    dropdown.className = "autocomplete-dropdown";
+    dropdown.style.position = "absolute";
+    dropdown.style.top = `${(rect.bottom).toFixed()}px`;
+    dropdown.style.left = `${rect.left.toFixed()}px`;
+    dropdown.style.width = `${rect.width.toFixed()}px`;
+    dropdown.style.margin = "0";
+    dropdown.style.padding = "0";
+    dropdown.style.listStyle = "none";
+    dropdown.style.background = "white";
+    dropdown.style.border = "1px solid #ccc";
+    dropdown.style.zIndex = "1000";
+
+    this._filteredOptions.forEach(opt => {
+      const li = document.createElement("li");
+      li.textContent = opt;
+      li.style.padding = "4px 8px";
+      li.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        this._selectOption(opt);
       });
-      this.highlightedIndex = -1;
-      suggestionBox.style.display = 'block';
+      dropdown.appendChild(li);
     });
 
-    // Add keyboard navigation
-    inputElement.addEventListener('keydown', (e) => {
-      const items = Array.from(suggestionBox.children);
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        if (this.highlightedIndex < items.length - 1) {
-          this.highlightedIndex++;
-          highlightSuggestion();
-        }
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        if (this.highlightedIndex > 0) {
-          this.highlightedIndex--;
-          highlightSuggestion();
-        }
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        if (this.highlightedIndex >= 0 && this.highlightedIndex < items.length) {
-          inputElement.value = items[this.highlightedIndex].textContent;
-          suggestionBox.style.display = 'none';
-          inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      } else if (e.key === 'Escape') {
-        suggestionBox.style.display = 'none';
-      }
-    });
+    element.appendChild(dropdown);
+    this._dropdown = dropdown;
+  }
 
-    // Close suggestions when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!inputElement.contains(e.target) && !suggestionBox.contains(e.target)) {
-        suggestionBox.style.display = 'none';
-      }
-    });
+  _highlight(items, index) {
+    items.forEach(i => i.classList.remove("active"));
+    const item = items[index];
+    if (item) item.classList.add("active");
+  }
 
-    // Helper function to highlight suggestions
-    const highlightSuggestion = () => {
-      const items = Array.from(suggestionBox.children);
-      items.forEach((item, index) => {
-        item.style.background = index === this.highlightedIndex ? '#bde4ff' : '';
-      });
-    };
+  _selectOption(value) {
+    this._input.value = value;
+    this._grid.doSetCellValue(this._cell.col, this._cell.row, value);
+    this._cleanup();
+  }
+
+  _cleanupDropdown() {
+    if (this._dropdown) {
+      this._dropdown.remove();
+      this._dropdown = null;
+    }
+  }
+
+  _cleanup() {
+    this._cleanupDropdown();
+    if (this._input) {
+      this._input.remove();
+      this._input = null;
+    }
   }
 }
