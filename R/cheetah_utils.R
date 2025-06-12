@@ -91,7 +91,6 @@ column_def <- function(
   column_type = NULL,
   action = NULL,
   editable = TRUE,
-  editor_type = "autocomplete",
   auto_complete_opts = NULL,
   menu_options = NULL,
   style = NULL,
@@ -135,6 +134,7 @@ column_def <- function(
           options = menu_options
         )
       } else if (action == "autocomplete") {
+        # TODO: Ensure when `action == "autocomplete"` the column class must be character.
         list(
           type = action,
           options = auto_complete_opts
@@ -143,7 +143,6 @@ column_def <- function(
         action
       }
     },
-    editorType = editor_type,
     style = style,
     message = message,
     sort = sort
