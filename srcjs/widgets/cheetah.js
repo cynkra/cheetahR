@@ -44,7 +44,6 @@ HTMLWidgets.widget({
                   options: obj.action.options,
                 });
               } else if (obj.action.type === "autocomplete") {
-                obj.columnType = "string";
                 obj.action = new AutocompleteEditor({
                   autocompleteOptions: obj.action.options || []
                 });
