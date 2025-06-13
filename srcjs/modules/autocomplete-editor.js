@@ -171,10 +171,13 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     if (item) item.classList.add("active");
   }
 
-  _selectOption(value) {
-    this._input.value = value;
-    this._grid.doSetCellValue(this._cell.col, this._cell.row, value);
-    this._cleanup();
+   _selectOption(value) {
+    // notify grid of the change
+    if (typeof this._grid.doChangeValue === 'function') {
+      this._grid.doChangeValue(this._cell.col, this._cell.row, () => value);
+    }
+    // finish editing (detach input)
+    super.onChangeSelectCellInternal(this._grid, this._cell, false);
   }
 
   _cleanupDropdown() {
