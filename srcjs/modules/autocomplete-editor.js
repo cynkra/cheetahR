@@ -101,9 +101,10 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
 
   _onInput() {
     const value = this._input.value;
-    this._filteredOptions = this.options.filter(opt =>
-      opt.toLowerCase().includes(value.toLowerCase())
-    );
+    // filter and limit to max 10 suggestions
+    this._filteredOptions = this.options
+      .filter(opt => opt.toLowerCase().includes(value.toLowerCase()))
+      .slice(0, 10);
     this._renderDropdown();
   }
 
