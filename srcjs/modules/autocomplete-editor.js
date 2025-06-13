@@ -1,5 +1,33 @@
 import * as cheetahGrid from "cheetah-grid";
 
+// Inject dropdown CSS (once)
+(function() {
+  if (!document.getElementById("autocomplete-editor-styles")) {
+    const style = document.createElement("style");
+    style.id = "autocomplete-editor-styles";
+    style.textContent = `
+      .autocomplete-dropdown {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background-color: white;
+        border: 1px solid #ccc;
+      }
+      .autocomplete-dropdown li {
+        padding: 4px 8px;
+        cursor: pointer;
+      }
+      .autocomplete-dropdown li:hover {
+        background-color: #f5f5f5;
+      }
+      .autocomplete-dropdown li.active {
+        background-color: #e0e0e0;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+})();
+
 export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEditor {
   constructor(options = {}) {
     super(options);
@@ -9,7 +37,6 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     this._input = null;
     this._grid = null;
     this._cell = null;
-    console.log('AutocompleteEditor initialized with options:', this.options);
   }
 
   clone() {
@@ -21,14 +48,11 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
   }
 
   onInputCellInternal(grid, cell, inputValue) {
-    // get attaching container and position
     const { element, rect } = grid.getAttachCellsArea(
       grid.getCellRange(cell.col, cell.row)
     );
-    // create and style input
     const input = document.createElement("input");
     input.type = this.type || "text";
-    // apply default InlineInputEditor attrs
     super.onSetInputAttrsInternal(grid, cell, input);
     input.style.position = "absolute";
     input.style.top = `${rect.top.toFixed()}px`;
@@ -114,7 +138,6 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     this._cleanupDropdown();
     if (!this._filteredOptions.length) return;
 
-    // position under input via getAttachCellsArea again
     const { element, rect } = this._grid.getAttachCellsArea(
       this._grid.getCellRange(this._cell.col, this._cell.row)
     );
@@ -122,20 +145,14 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     const dropdown = document.createElement("ul");
     dropdown.className = "autocomplete-dropdown";
     dropdown.style.position = "absolute";
-    dropdown.style.top = `${(rect.bottom).toFixed()}px`;
+    dropdown.style.top = `${rect.bottom.toFixed()}px`;
     dropdown.style.left = `${rect.left.toFixed()}px`;
     dropdown.style.width = `${rect.width.toFixed()}px`;
-    dropdown.style.margin = "0";
-    dropdown.style.padding = "0";
-    dropdown.style.listStyle = "none";
-    dropdown.style.background = "white";
-    dropdown.style.border = "1px solid #ccc";
     dropdown.style.zIndex = "1000";
 
-    this._filteredOptions.forEach(opt => {
+    this._filteredOptions.forEach((opt, i) => {
       const li = document.createElement("li");
       li.textContent = opt;
-      li.style.padding = "4px 8px";
       li.addEventListener("mousedown", (e) => {
         e.preventDefault();
         this._selectOption(opt);
