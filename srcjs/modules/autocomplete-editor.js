@@ -127,7 +127,11 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
         break;
       case "Enter":
         e.preventDefault();
-        if (active) this._selectOption(active.textContent);
+        // commit either the highlighted option or raw input text
+        const newValue = active ? active.textContent : this._input.value;
+        this._selectOption(newValue);
+        // optionally blur to ensure editor finishes
+        if (this._input) this._input.blur();
         break;
       case "Escape":
         this._cleanup();
