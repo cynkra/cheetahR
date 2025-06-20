@@ -11,14 +11,15 @@ HTMLWidgets.widget({
   factory: function (el, width, height) {
 
     let id = el.id;
+    let grid;
 
     return {
 
       renderValue: function (x, id = el.id) {
         let columns;
-        const header = Object.keys(x.data[0])
+        const header = Object.keys(x.data[0]);
         const defaultCol = header.map((key) => {
-          return ({ field: key, caption: key});
+          return ({ field: key, caption: key });
         });
 
         if (x.columns !== null) {
@@ -102,7 +103,7 @@ HTMLWidgets.widget({
         if (isDefined(x.allowRangePaste)) gridConfig.allowRangePaste = x.allowRangePaste;
         if (isDefined(x.keyboardOptions)) gridConfig.keyboardOptions = x.keyboardOptions;
 
-        const grid = new cheetahGrid.ListGrid(gridConfig);
+        grid = new cheetahGrid.ListGrid(gridConfig);
 
         // Search feature
         if (x.search !== 'disabled') {
@@ -149,13 +150,12 @@ HTMLWidgets.widget({
               }
               : null;
             grid.invalidate();
-          })
+          });
         } else {
-          // Array data to be displayed on the grid
-          grid.records = x.data;
+          grid.dataSource = cheetahGrid.data.DataSource.ofArray(x.data);
         }
 
-        // Only is Shiny exists
+        // Only if Shiny exists
         if (HTMLWidgets.shinyMode) {
           const {
             CLICK_CELL,
@@ -164,18 +164,60 @@ HTMLWidgets.widget({
 
           grid.listen(
             CLICK_CELL, (...args) => {
-              Shiny.setInputValue(`${id}_click_cell`, args);
+              Shiny.setInputValue(`${id}_click_cell`, {
+                row: args[0].row,
+                col: args[0].col + 1 // Add +1 to correspond to R indexing system
+              });
             }
           );
 
           grid.listen(
             CHANGED_VALUE, (...args) => {
-              Shiny.setInputValue(`${id}_changed_value`, args);
+              Shiny.setInputValue(`${id}_changed_value`, {
+                row: args[0].row,
+                col: args[0].col + 1,
+                value: args[0].value,
+                oldValue: args[0].oldValue,
+                record: args[0].record
+              });
             }
           );
+
+          // Handle proxy messages
+          Shiny.addCustomMessageHandler('cheetah-proxy-actions', function(msg) {
+            if (msg.id !== id) {
+              console.log("Couldn't find table with id " + id);
+              return;
+
+            }
+
+            const args = msg.call.args;
+
+            // Get the correct records array
+            let records = grid.dataSource._source;
+
+            switch (msg.method) {
+              case 'addRow':
+                records.push(args.data[0]);
+                grid.dataSource.length = grid.dataSource.length + 1;
+                grid.invalidate();
+                break;
+              case 'deleteRow':
+                const deleteIndex = args.rowIndex;
+                if (records[deleteIndex]) {
+                  records.splice(deleteIndex, 1);
+                  grid.dataSource.length = grid.dataSource.length - 1;
+                  grid.invalidate();
+                }
+                break;
+            }
+          });
         }
       },
 
+      getGrid: function() {
+        return grid;
+      },
       resize: function (width, height) {
 
         // TODO: code to re-render the widget with a new size
