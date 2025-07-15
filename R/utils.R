@@ -116,10 +116,10 @@ update_col_list_with_classes <- function(data, col_list) {
     }
 
     if (is.null(col_list[[col_name]]$columnType)) {
-      if (col_classes[[col_name]] %in% c("numeric", "integer")) {
+      if (col_classes[[col_name]][1] %in% c("numeric", "integer")) {
         col_list[[col_name]]$columnType <- "number"
       } else if (
-        col_classes[[col_name]] == "factor" && any(in_shiny, is_testing)
+        col_classes[[col_name]][1] == "factor" && any(in_shiny, is_testing)
       ) {
         # This is to recover the possible choices for a factor column.
         menu_opt <- lapply(
