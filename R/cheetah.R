@@ -14,7 +14,28 @@
 #' Default to `disabled`. Use `exact` for exact matching
 #' or `contains` to get larger matches.
 #' @param sortable Logical. Whether to enable sorting on all columns. Defaults to TRUE.
-#'
+#' @param editable Logical. Whether to enable cell editing. Defaults to FALSE.
+#' @param disable_column_resize Logical. Whether to disable column resizing. Defaults to FALSE.
+#' @param column_freeze Integer. The number of columns to freeze from the left.
+#' @param default_row_height Integer. The default row height.
+#' @param default_col_width Integer. The default column width.
+#' @param header_row_height Integer. The header row height.
+#' @param theme The theme to use for the widget. Provide a named list of valid styling options to customize the widget.
+#' For possible options, see \href{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}{Extend Theme in Cheetah Grid}
+#' @param font A String. The font to use for the widget. This is possible to set a font value according
+#' to the standard CSS font properties shorthand declaration. For example, `font = "12px Arial, sans-serif"`.
+#' This means that the font size is 12px, the font family is Arial, and the font weight is normal.
+#' @param underlay_background_color The underlay background color of the widget.
+#' @param allow_range_paste Logical. Whether to allow range pasting. Defaults to FALSE.
+#' To activate this option set `editable = TRUE` or ensure a given column is editable.
+#' @param keyboard_options A named list of keyboard options. There are four options:
+#' \itemize{
+#'   \item `moveCellOnTab`. Set to `TRUE` to enable cell movement by Tab key.
+#'   \item `moveCellOnEnter`. Set to `TRUE` to enable cell movement by Enter key.
+#'   \item `deleteCellValueOnDel`. Set to `TRUE` to enable deletion of cell values with the Delete and BackSpace keys.
+#'   Note that this will only work if `editable` is `TRUE` or a given column is editable.
+#'   \item `selectAllOnCtrlA`. Set to `TRUE` to enable select all cells by 'Ctrl + A key.
+#' }
 #' @return An HTML widget object of class 'cheetah' that can be:
 #'   \itemize{
 #'     \item Rendered in R Markdown documents
@@ -22,6 +43,62 @@
 #'     \item Displayed in R interactive sessions
 #'   }
 #'   The widget renders as an HTML table with all specified customizations.
+#'
+#' @examples
+#' # Basic usage
+#' cheetah(iris)
+#'
+#' # Customize columns
+#' cheetah(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = column_def(name = "Length"),
+#'     Sepal.Width = column_def(name = "Width"),
+#'     Petal.Length = column_def(name = "Length"),
+#'     Petal.Width = column_def(name = "Width")
+#'   )
+#' )
+#'
+#' # Customize rownames
+#' cheetah(
+#'   mtcars,
+#'   columns = list(
+#'     rownames = column_def(width = 150, style = list(color = "red"))
+#'   )
+#' )
+#'
+#' # Customize column groups
+#' cheetah(
+#'   iris,
+#'   columns = list(
+#'     Sepal.Length = column_def(name = "Length"),
+#'     Sepal.Width = column_def(name = "Width"),
+#'     Petal.Length = column_def(name = "Length"),
+#'     Petal.Width = column_def(name = "Width")
+#'   ),
+#'   column_group = list(
+#'     column_group(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+#'     column_group(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+#'   )
+#' )
+#'
+#' # Enable search
+#' cheetah(iris, search = "contains")
+#'
+#' # Enable sorting
+#' cheetah(iris, sortable = TRUE)
+#'
+#' # Enable cell editing
+#' cheetah(iris, editable = TRUE)
+#'
+#' # Disable column resizing
+#' cheetah(iris, disable_column_resize = TRUE)
+#'
+#' # Freeze columns
+#' cheetah(iris, column_freeze = 2)
+#'
+#' # Set default row height
+#' cheetah(iris, default_row_height = 30)
 #'
 #' @import htmlwidgets
 #' @import jsonlite
@@ -37,9 +114,30 @@ cheetah <- function(
   elementId = NULL,
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
-  sortable = TRUE
+  sortable = TRUE,
+  editable = FALSE,
+  disable_column_resize = FALSE,
+  column_freeze = NULL,
+  default_row_height = NULL,
+  default_col_width = NULL,
+  header_row_height = NULL,
+  theme = NULL,
+  font = NULL,
+  underlay_background_color = NULL,
+  allow_range_paste = FALSE,
+  keyboard_options = NULL
 ) {
   search <- match.arg(search)
+
+  stopifnot(
+    "`keyboard_options` must be a named list" =
+      is.null(keyboard_options) |
+      is_named_list(keyboard_options)
+  )
+  stopifnot("`theme` must be a named list" =
+    is.null(theme) |
+    is_named_list(theme)
+  )
   # Only show rownames if they are character strings (meaningful) and rownames is TRUE
   processed_rn <- process_rownames(data, columns, rownames)
 
@@ -61,11 +159,29 @@ cheetah <- function(
   columns <-
     update_col_list_with_classes(data, columns) %>%
     make_table_sortable(sortable = sortable) %>%
+    make_table_editable(editable = editable) %>%
+    auto_set_column_width(default_col_width = default_col_width) %>%
     add_field_to_list()
 
   data_json <- toJSON(data, dataframe = "rows")
   # forward options using x
-  x <- list(data = data_json, columns = columns, colGroup = column_group, search = search)
+  x <-
+    dropNulls(list(
+      data = data_json,
+      columns = columns,
+      colGroup = column_group,
+      search = search,
+      disableColumnResize = disable_column_resize,
+      frozenColCount = column_freeze,
+      defaultRowHeight = default_row_height,
+      defaultColWidth = default_col_width,
+      headerRowHeight =  header_row_height,
+      theme = theme,
+      font = font,
+      underlayBackgroundColor = underlay_background_color,
+      allowRangePaste = allow_range_paste,
+      keyboardOptions = keyboard_options
+    ))
 
   # create widget
   htmlwidgets::createWidget(

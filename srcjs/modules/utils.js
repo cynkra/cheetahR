@@ -41,3 +41,10 @@ export function combineColumnsAndGroups(columnsList, colGroups) {
   }
   
   
+/**
+  * Checks if a value is defined and not null
+*/
+export function isDefined(value) {
+    return value !== undefined && value !== null;
+}
+

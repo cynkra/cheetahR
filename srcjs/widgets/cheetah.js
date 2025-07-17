@@ -1,5 +1,5 @@
 import 'widgets';
-import { combineColumnsAndGroups } from '../modules/utils.js';
+import { combineColumnsAndGroups, isDefined } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
 
 HTMLWidgets.widget({
@@ -11,14 +11,15 @@ HTMLWidgets.widget({
   factory: function (el, width, height) {
 
     let id = el.id;
+    let grid;
 
     return {
 
       renderValue: function (x, id = el.id) {
         let columns;
-        const header = Object.keys(x.data[0])
+        const header = Object.keys(x.data[0]);
         const defaultCol = header.map((key) => {
-          return ({ field: key, caption: key, width: 'auto' });
+          return ({ field: key, caption: key });
         });
 
         if (x.columns !== null) {
@@ -33,6 +34,38 @@ HTMLWidgets.widget({
 
           // Iterate over the list and process the `action` property if it is not null or undefined
           columns.forEach((obj) => {
+              // Column formatting logic
+              try {
+                if (isDefined(obj.columnType)) {
+                  // Number formatting
+                  if (obj.columnType.initializeNumFormat) {
+                    const { locales, initializeNumFormat, ...numFormatOptions } = obj.columnType;
+                    obj.columnType = new cheetahGrid.columns.type.NumberColumn({
+                      format: new Intl.NumberFormat(locales, numFormatOptions)
+                    });
+                  }
+                  // Date formatting
+                  else if (obj.columnType.initializeDateFormat) {
+                    const { locales, initializeDateFormat, ...dateFormatOptions } = obj.columnType;
+                    const originalField = obj.field;
+                    obj.field = function(rec) {
+                      const value = rec[originalField];
+                      if (value == null) return "";
+                      const dateTimeFormat = new Intl.DateTimeFormat(locales, dateFormatOptions);
+                      const date = new Date(value)
+                      return dateTimeFormat.format(date);
+                    };
+                    obj.columnType = null;
+                  }
+                }
+              } catch (error) {
+                if (HTMLWidgets.shinyMode) {
+                  Shiny.notifications.show({ html: 'Error initializing column format', type: 'error' });
+                } else {
+                  console.error(error);
+                }
+              }
+
             if (obj.action != null) {  // Checks for both null and undefined
               if (obj.action.type === "inline_menu") {
                 obj.columnType = new cheetahGrid.columns.type.MenuColumn({
@@ -50,16 +83,27 @@ HTMLWidgets.widget({
           columns = defaultCol;
         }
 
-        if (x.colGroup !== null) {
-          columns = combineColumnsAndGroups(columns, x.colGroup);
-        }
+        if (isDefined(x.colGroup)) columns = combineColumnsAndGroups(columns, x.colGroup);
 
-        const grid = new cheetahGrid.ListGrid({
+        // Create grid configuration object with only defined options
+        const gridConfig = {
           parentElement: document.getElementById(id),
-          header: columns,
-          // Column fixed position
-          // frozenColCount: 1,
-        });
+          header: columns
+        };
+
+        // Only add options if they are defined
+        if (isDefined(x.disableColumnResize)) gridConfig.disableColumnResize = x.disableColumnResize;
+        if (isDefined(x.frozenColCount)) gridConfig.frozenColCount = x.frozenColCount;
+        if (isDefined(x.defaultRowHeight)) gridConfig.defaultRowHeight = x.defaultRowHeight;
+        if (isDefined(x.defaultColWidth)) gridConfig.defaultColWidth = x.defaultColWidth;
+        if (isDefined(x.headerRowHeight)) gridConfig.headerRowHeight = x.headerRowHeight;
+        if (isDefined(x.theme)) gridConfig.theme = x.theme;
+        if (isDefined(x.font)) gridConfig.font = x.font;
+        if (isDefined(x.underlayBackgroundColor)) gridConfig.underlayBackgroundColor = x.underlayBackgroundColor;
+        if (isDefined(x.allowRangePaste)) gridConfig.allowRangePaste = x.allowRangePaste;
+        if (isDefined(x.keyboardOptions)) gridConfig.keyboardOptions = x.keyboardOptions;
+
+        grid = new cheetahGrid.ListGrid(gridConfig);
 
         // Search feature
         if (x.search !== 'disabled') {
@@ -89,7 +133,7 @@ HTMLWidgets.widget({
                   let testCond;
                   switch (x.search) {
                     case 'contains':
-                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;;
+                      testCond = `${record[k]}`.indexOf(filterValue) >= 0;
                       break;
                     case 'exact':
                       let r = new RegExp(`^${filterValue}$`);
@@ -106,13 +150,12 @@ HTMLWidgets.widget({
               }
               : null;
             grid.invalidate();
-          })
+          });
         } else {
-          // Array data to be displayed on the grid
-          grid.records = x.data;
+          grid.dataSource = cheetahGrid.data.DataSource.ofArray(x.data);
         }
 
-        // Only is Shiny exists
+        // Only if Shiny exists
         if (HTMLWidgets.shinyMode) {
           const {
             CLICK_CELL,
@@ -121,18 +164,60 @@ HTMLWidgets.widget({
 
           grid.listen(
             CLICK_CELL, (...args) => {
-              Shiny.setInputValue(`${id}_click_cell`, args);
+              Shiny.setInputValue(`${id}_click_cell`, {
+                row: args[0].row,
+                col: args[0].col + 1 // Add +1 to correspond to R indexing system
+              });
             }
           );
 
           grid.listen(
             CHANGED_VALUE, (...args) => {
-              Shiny.setInputValue(`${id}_changed_value`, args);
+              Shiny.setInputValue(`${id}_changed_value`, {
+                row: args[0].row,
+                col: args[0].col + 1,
+                value: args[0].value,
+                oldValue: args[0].oldValue,
+                record: args[0].record
+              });
             }
           );
+
+          // Handle proxy messages
+          Shiny.addCustomMessageHandler('cheetah-proxy-actions', function(msg) {
+            if (msg.id !== id) {
+              console.log("Couldn't find table with id " + id);
+              return;
+
+            }
+
+            const args = msg.call.args;
+
+            // Get the correct records array
+            let records = grid.dataSource._source;
+
+            switch (msg.method) {
+              case 'addRow':
+                records.push(args.data[0]);
+                grid.dataSource.length = grid.dataSource.length + 1;
+                grid.invalidate();
+                break;
+              case 'deleteRow':
+                const deleteIndex = args.rowIndex;
+                if (records[deleteIndex]) {
+                  records.splice(deleteIndex, 1);
+                  grid.dataSource.length = grid.dataSource.length - 1;
+                  grid.invalidate();
+                }
+                break;
+            }
+          });
         }
       },
 
+      getGrid: function() {
+        return grid;
+      },
       resize: function (width, height) {
 
         // TODO: code to re-render the widget with a new size

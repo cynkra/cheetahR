@@ -13,7 +13,18 @@ cheetah(
   elementId = NULL,
   rownames = TRUE,
   search = c("disabled", "exact", "contains"),
-  sortable = TRUE
+  sortable = TRUE,
+  editable = FALSE,
+  disable_column_resize = FALSE,
+  column_freeze = NULL,
+  default_row_height = NULL,
+  default_col_width = NULL,
+  header_row_height = NULL,
+  theme = NULL,
+  font = NULL,
+  underlay_background_color = NULL,
+  allow_range_paste = FALSE,
+  keyboard_options = NULL
 )
 }
 \arguments{
@@ -37,6 +48,39 @@ Default to \code{disabled}. Use \code{exact} for exact matching
 or \code{contains} to get larger matches.}
 
 \item{sortable}{Logical. Whether to enable sorting on all columns. Defaults to TRUE.}
+
+\item{editable}{Logical. Whether to enable cell editing. Defaults to FALSE.}
+
+\item{disable_column_resize}{Logical. Whether to disable column resizing. Defaults to FALSE.}
+
+\item{column_freeze}{Integer. The number of columns to freeze from the left.}
+
+\item{default_row_height}{Integer. The default row height.}
+
+\item{default_col_width}{Integer. The default column width.}
+
+\item{header_row_height}{Integer. The header row height.}
+
+\item{theme}{The theme to use for the widget. Provide a named list of valid styling options to customize the widget.
+For possible options, see \href{https://future-architect.github.io/cheetah-grid/documents/api/js/theme.html#extend-theme}{Extend Theme in Cheetah Grid}}
+
+\item{font}{A String. The font to use for the widget. This is possible to set a font value according
+to the standard CSS font properties shorthand declaration. For example, \code{font = "12px Arial, sans-serif"}.
+This means that the font size is 12px, the font family is Arial, and the font weight is normal.}
+
+\item{underlay_background_color}{The underlay background color of the widget.}
+
+\item{allow_range_paste}{Logical. Whether to allow range pasting. Defaults to FALSE.
+To activate this option set \code{editable = TRUE} or ensure a given column is editable.}
+
+\item{keyboard_options}{A named list of keyboard options. There are four options:
+\itemize{
+\item \code{moveCellOnTab}. Set to \code{TRUE} to enable cell movement by Tab key.
+\item \code{moveCellOnEnter}. Set to \code{TRUE} to enable cell movement by Enter key.
+\item \code{deleteCellValueOnDel}. Set to \code{TRUE} to enable deletion of cell values with the Delete and BackSpace keys.
+Note that this will only work if \code{editable} is \code{TRUE} or a given column is editable.
+\item \code{selectAllOnCtrlA}. Set to \code{TRUE} to enable select all cells by 'Ctrl + A key.
+}}
 }
 \value{
 An HTML widget object of class 'cheetah' that can be:
@@ -49,4 +93,61 @@ The widget renders as an HTML table with all specified customizations.
 }
 \description{
 Creates a high-performance table widget using Cheetah Grid.
+}
+\examples{
+# Basic usage
+cheetah(iris)
+
+# Customize columns
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  )
+)
+
+# Customize rownames
+cheetah(
+  mtcars,
+  columns = list(
+    rownames = column_def(width = 150, style = list(color = "red"))
+  )
+)
+
+# Customize column groups
+cheetah(
+  iris,
+  columns = list(
+    Sepal.Length = column_def(name = "Length"),
+    Sepal.Width = column_def(name = "Width"),
+    Petal.Length = column_def(name = "Length"),
+    Petal.Width = column_def(name = "Width")
+  ),
+  column_group = list(
+    column_group(name = "Sepal", columns = c("Sepal.Length", "Sepal.Width")),
+    column_group(name = "Petal", columns = c("Petal.Length", "Petal.Width"))
+  )
+)
+
+# Enable search
+cheetah(iris, search = "contains")
+
+# Enable sorting
+cheetah(iris, sortable = TRUE)
+
+# Enable cell editing
+cheetah(iris, editable = TRUE)
+
+# Disable column resizing
+cheetah(iris, disable_column_resize = TRUE)
+
+# Freeze columns
+cheetah(iris, column_freeze = 2)
+
+# Set default row height
+cheetah(iris, default_row_height = 30)
+
 }
