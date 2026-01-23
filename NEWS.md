@@ -1,5 +1,14 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# cheetahR 0.3.0
+
+- Implement Shiny proxy functions
+- Implement column formatter:
+  - Numeric formatter
+  - Date formatter
+- Fix issue with datetime object
+
+
 # cheetahR 0.2.0
 
 - Implement menu column options

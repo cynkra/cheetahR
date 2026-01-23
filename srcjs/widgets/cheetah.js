@@ -35,6 +35,38 @@ HTMLWidgets.widget({
 
           // Iterate over the list and process the `action` property if it is not null or undefined
           columns.forEach((obj) => {
+              // Column formatting logic
+              try {
+                if (isDefined(obj.columnType)) {
+                  // Number formatting
+                  if (obj.columnType.initializeNumFormat) {
+                    const { locales, initializeNumFormat, ...numFormatOptions } = obj.columnType;
+                    obj.columnType = new cheetahGrid.columns.type.NumberColumn({
+                      format: new Intl.NumberFormat(locales, numFormatOptions)
+                    });
+                  }
+                  // Date formatting
+                  else if (obj.columnType.initializeDateFormat) {
+                    const { locales, initializeDateFormat, ...dateFormatOptions } = obj.columnType;
+                    const originalField = obj.field;
+                    obj.field = function(rec) {
+                      const value = rec[originalField];
+                      if (value == null) return "";
+                      const dateTimeFormat = new Intl.DateTimeFormat(locales, dateFormatOptions);
+                      const date = new Date(value)
+                      return dateTimeFormat.format(date);
+                    };
+                    obj.columnType = null;
+                  }
+                }
+              } catch (error) {
+                if (HTMLWidgets.shinyMode) {
+                  Shiny.notifications.show({ html: 'Error initializing column format', type: 'error' });
+                } else {
+                  console.error(error);
+                }
+              }
+
             if (obj.action != null) {  // Checks for both null and undefined
               if (obj.action.type === "inline_menu") {
                 obj.columnType = new cheetahGrid.columns.type.MenuColumn({
