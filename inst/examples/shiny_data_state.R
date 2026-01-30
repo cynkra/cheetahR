@@ -1,5 +1,4 @@
 library(shiny)
-library(dplyr)
 library(cheetahR)
 
 ui <- fluidPage(
