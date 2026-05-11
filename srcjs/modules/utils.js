@@ -48,3 +48,44 @@ export function isDefined(value) {
     return value !== undefined && value !== null;
 }
 
+/**
+ * Converts an array of objects (row-wise data) to a column-wise list format.
+ * This format is easier for R/Shiny to convert to a data frame/tibble.
+ * 
+ * Example:
+ * Input:  [{ name: "John", age: 30 }, { name: "Jane", age: 25 }]
+ * Output: { name: ["John", "Jane"], age: [30, 25] }
+ * 
+ * In R, use: as.data.frame(lapply(input$grid_data_state, unlist))
+ * Or: tibble::as_tibble(lapply(input$grid_data_state, unlist))
+ * 
+ * @param {Array} arr - Array of objects (each object is a row)
+ * @returns {Object} - Object with arrays as values (each key is a column)
+ */
+export function arrayToList(arr) {
+    if (!arr || arr.length === 0) {
+        return {};
+    }
+    
+    // Get all unique keys from all objects
+    const keys = [...new Set(arr.flatMap(obj => Object.keys(obj)))];
+    
+    // Create the column-wise structure with primitive values only
+    const result = {};
+    keys.forEach(key => {
+        result[key] = arr.map(obj => {
+            const val = obj[key];
+            // Ensure primitive values (convert objects/arrays to string if needed)
+            if (val === undefined || val === null) {
+                return null;
+            } else if (typeof val === 'object') {
+                return JSON.stringify(val);
+            } else {
+                return val;
+            }
+        });
+    });
+    
+    return result;
+}
+
