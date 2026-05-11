@@ -16,6 +16,14 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function (x, id = el.id) {
+        // Release previous grid instance and clear the container so re-renders
+        // replace the grid rather than appending a second one (issue #51).
+        if (grid) {
+          grid.release();
+          grid = null;
+        }
+        el.innerHTML = '';
+
         let columns;
         const header = Object.keys(x.data[0]);
         const defaultCol = header.map((key) => {
