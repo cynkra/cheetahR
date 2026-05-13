@@ -11,6 +11,7 @@ column_def(
   max_width = NULL,
   column_type = NULL,
   action = NULL,
+  auto_complete_opts = NULL,
   menu_options = NULL,
   style = NULL,
   message = NULL,
@@ -47,7 +48,15 @@ the appropriate Action class for the column type.
 \item \code{"check"} for check action columns.
 \item \code{"radio"} for radio action columns.
 \item \code{"inline_menu"} for menu selection columns.
+\item \code{"autocomplete"} for typeahead-style input columns backed by a
+fixed list of suggestions. Requires \code{auto_complete_opts} and a
+character column.
 }}
+
+\item{auto_complete_opts}{Character vector of suggestions shown by the
+autocomplete dropdown. Required when \code{action = "autocomplete"} and
+ignored otherwise. The column being targeted must be of class
+\code{character}.}
 
 \item{menu_options}{A list of menu options when using \code{column_type = "menu"}.
 Each option should be a list with \code{value} and \code{label} elements.
@@ -112,6 +121,19 @@ cheetah(
     Sepal.Width = column_def(name = "Width"),
     Petal.Length = column_def(name = "Length"),
     Petal.Width = column_def(name = "Width")
+  )
+)
+
+# Autocomplete editor backed by a fixed list of suggestions
+cheetah(
+  data.frame(country = c("France", "Germany"), stringsAsFactors = FALSE),
+  editable = TRUE,
+  rownames = FALSE,
+  columns = list(
+    country = column_def(
+      action = "autocomplete",
+      auto_complete_opts = c("France", "Germany", "Ghana", "India")
+    )
   )
 )
 
