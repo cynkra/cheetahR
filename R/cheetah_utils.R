@@ -134,7 +134,6 @@ column_def <- function(
           options = menu_options
         )
       } else if (action == "autocomplete") {
-        # TODO: Ensure when `action == "autocomplete"` the column class must be character.
         list(
           type = action,
           options = auto_complete_opts

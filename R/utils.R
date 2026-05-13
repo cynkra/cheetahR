@@ -99,6 +99,14 @@ update_col_list_with_classes <- function(data, col_list) {
   is_testing <- is_testing()
 
   for (col_name in names(col_classes)) {
+    action <- col_list[[col_name]]$action
+    if (is.list(action) && identical(action$type, "autocomplete")) {
+      stopifnot(
+        "`action = \"autocomplete\"` can only be applied to a character column" =
+          col_classes[[col_name]][1] == "character"
+      )
+    }
+
     if (inherits(col_list[[col_name]]$columnType, 'numFormat')) {
       stopifnot(
         "'number_format()' can only be applied to a numeric column type" = col_classes[[
