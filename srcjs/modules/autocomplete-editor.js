@@ -158,6 +158,23 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
         e.stopPropagation();
         this._commit(active ? active.textContent : this._input.value);
         break;
+      case "Tab": {
+        // Mirror cheetah-grid's standard input editor: commit on Tab and let
+        // the grid move the selection if `keyboardOptions.moveCellOnTab` is on.
+        e.preventDefault();
+        e.stopPropagation();
+        const grid = this._grid;
+        this._commit(active ? active.textContent : this._input.value);
+        if (
+          grid &&
+          grid.keyboardOptions &&
+          grid.keyboardOptions.moveCellOnTab &&
+          typeof grid.onKeyDownMove === "function"
+        ) {
+          grid.onKeyDownMove(e);
+        }
+        break;
+      }
       case "Escape":
         e.preventDefault();
         e.stopPropagation();
