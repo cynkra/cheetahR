@@ -68,9 +68,23 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     this._grid = grid;
     this._cell = cell;
     this._input = input;
+    this._committing = false;
+
+    // Mirror cheetah-grid's standard InlineInputElement: stop pointer/key
+    // events from reaching the grid while the editor is open, otherwise the
+    // grid moves the selection or closes the editor mid-edit.
+    const stop = (e) => e.stopPropagation();
+    input.addEventListener("click", stop);
+    input.addEventListener("mousedown", stop);
+    input.addEventListener("touchstart", stop);
+    input.addEventListener("dblclick", stop);
 
     input.addEventListener("input", () => this._onInput());
     input.addEventListener("keydown", (e) => this._onKeyDown(e));
+    input.addEventListener("blur", () => {
+      // Commit on focus loss (e.g. clicking outside the grid).
+      if (this._input === input) this._commit(input.value);
+    });
   }
 
   onOpenCellInternal(grid, cell) {
@@ -80,8 +94,13 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
   }
 
   onChangeSelectCellInternal(grid, cell, selected) {
-    super.onChangeSelectCellInternal(grid, cell, selected);
-    this._cleanup();
+    // Grid is telling us the selection has moved. Commit the pending edit so
+    // clicking another cell does not silently discard the user's input.
+    if (this._input && this._grid === grid) {
+      this._commit(this._input.value);
+    } else {
+      this._cleanup();
+    }
   }
 
   onGridScrollInternal(grid) {
@@ -109,32 +128,41 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
   }
 
   _onKeyDown(e) {
-    if (!this._dropdown) return;
-    const items = Array.from(this._dropdown.querySelectorAll("li"));
-    const active = this._dropdown.querySelector(".active");
+    const items = this._dropdown
+      ? Array.from(this._dropdown.querySelectorAll("li"))
+      : [];
+    const active = this._dropdown
+      ? this._dropdown.querySelector(".active")
+      : null;
     let index = items.indexOf(active);
 
     switch (e.key) {
       case "ArrowDown":
+        if (!items.length) return;
         e.preventDefault();
+        e.stopPropagation();
         index = index < items.length - 1 ? index + 1 : 0;
         this._highlight(items, index);
         break;
       case "ArrowUp":
+        if (!items.length) return;
         e.preventDefault();
+        e.stopPropagation();
         index = index > 0 ? index - 1 : items.length - 1;
         this._highlight(items, index);
         break;
       case "Enter":
+        // Stop the grid from also processing Enter (which would re-open the
+        // editor or move the selection before the value is written).
         e.preventDefault();
-        // commit either the highlighted option or raw input text
-        const newValue = active ? active.textContent : this._input.value;
-        this._selectOption(newValue);
-        // optionally blur to ensure editor finishes
-        if (this._input) this._input.blur();
+        e.stopPropagation();
+        this._commit(active ? active.textContent : this._input.value);
         break;
       case "Escape":
+        e.preventDefault();
+        e.stopPropagation();
         this._cleanup();
+        if (this._grid && this._grid.focus) this._grid.focus();
         break;
     }
   }
@@ -155,12 +183,15 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     dropdown.style.width = `${rect.width.toFixed()}px`;
     dropdown.style.zIndex = "1000";
 
-    this._filteredOptions.forEach((opt, i) => {
+    this._filteredOptions.forEach((opt) => {
       const li = document.createElement("li");
       li.textContent = opt;
+      // mousedown rather than click so the input does not blur first; stop
+      // propagation so the underlying grid does not move the selection.
       li.addEventListener("mousedown", (e) => {
         e.preventDefault();
-        this._selectOption(opt);
+        e.stopPropagation();
+        this._commit(opt);
       });
       dropdown.appendChild(li);
     });
@@ -175,13 +206,23 @@ export class AutocompleteEditor extends cheetahGrid.columns.action.InlineInputEd
     if (item) item.classList.add("active");
   }
 
-   _selectOption(value) {
-    // notify grid of the change
-    if (typeof this._grid.doChangeValue === 'function') {
-      this._grid.doChangeValue(this._cell.col, this._cell.row, () => value);
+  // Write the new value through the grid's editor API and tear the editor
+  // down. doChangeValue fires CHANGED_VALUE, which the widget already listens
+  // for to push the updated cell into Shiny.
+  _commit(value) {
+    if (this._committing) return;
+    this._committing = true;
+    const grid = this._grid;
+    const cell = this._cell;
+    if (!grid || !cell) {
+      this._cleanup();
+      return;
     }
-    // finish editing (detach input)
-    super.onChangeSelectCellInternal(this._grid, this._cell, false);
+    grid.doChangeValue(cell.col, cell.row, () => value);
+    const range = grid.getCellRange(cell.col, cell.row);
+    this._cleanup();
+    if (grid.invalidateCellRange) grid.invalidateCellRange(range);
+    if (grid.focus) grid.focus();
   }
 
   _cleanupDropdown() {

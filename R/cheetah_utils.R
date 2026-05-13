@@ -117,7 +117,7 @@ column_def <- function(
     stop("message must be a JavaScript function wrapped by htmlwidgets::JS().")
   }
 
-  if (action == "autocomplete" && is.null(auto_complete_opts)) {
+  if (identical(action, "autocomplete") && is.null(auto_complete_opts)) {
     stop("If `action == 'autocomplete'`, auto_complete_opts must not be NULL")
   }
 
