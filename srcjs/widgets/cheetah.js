@@ -1,5 +1,5 @@
 import 'widgets';
-import { combineColumnsAndGroups, isDefined } from '../modules/utils.js';
+import { combineColumnsAndGroups, isDefined, arrayToList } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
 import { AutocompleteEditor } from '../modules/autocomplete-editor.js';
 
@@ -17,6 +17,14 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function (x, id = el.id) {
+        // Release previous grid instance and clear the container so re-renders
+        // replace the grid rather than appending a second one (issue #51).
+        if (grid) {
+          grid.release();
+          grid = null;
+        }
+        el.innerHTML = '';
+
         let columns;
         const header = Object.keys(x.data[0]);
         const defaultCol = header.map((key) => {
@@ -185,6 +193,9 @@ HTMLWidgets.widget({
                 oldValue: args[0].oldValue,
                 record: args[0].record
               });
+
+              // Update the data state whenever there is a change
+              Shiny.setInputValue(`${id}_data_state`, arrayToList(grid.dataSource._source));
             }
           );
 
@@ -206,6 +217,8 @@ HTMLWidgets.widget({
                 records.push(args.data[0]);
                 grid.dataSource.length = grid.dataSource.length + 1;
                 grid.invalidate();
+                // Update the data state after adding a row
+                Shiny.setInputValue(`${id}_data_state`, arrayToList(grid.dataSource._source));
                 break;
               case 'deleteRow':
                 const deleteIndex = args.rowIndex;
@@ -213,6 +226,8 @@ HTMLWidgets.widget({
                   records.splice(deleteIndex, 1);
                   grid.dataSource.length = grid.dataSource.length - 1;
                   grid.invalidate();
+                  // Update the data state after deleting a row
+                  Shiny.setInputValue(`${id}_data_state`, arrayToList(grid.dataSource._source));
                 }
                 break;
             }
