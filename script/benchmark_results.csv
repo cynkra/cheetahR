@@ -1,0 +1,17 @@
+"engine","n","r_time_ms","browser_time_ms"
+"cheetah",1000,18.1,238.7
+"reactable",1000,13,65.4
+"DT",1000,12.2,323.9
+"rhandsontable",1000,4.2,1312.4
+"cheetah",10000,30.2,191.1
+"reactable",10000,53.6,122.7
+"DT",10000,5.1,1487.6
+"rhandsontable",10000,35.1,NA
+"cheetah",1e+05,267.5,369.4
+"reactable",1e+05,578.3,625.1
+"DT",1e+05,3.3,NA
+"rhandsontable",1e+05,245.9,NA
+"cheetah",1e+06,4064.3,3496.3
+"reactable",1e+06,9141.6,6766.2
+"DT",1e+06,4.6,NA
+"rhandsontable",1e+06,4675.5,NA
