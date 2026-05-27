@@ -931,3 +931,136 @@ shinyApp(ui = ui, server = server)
 ![](figures/customized_menucolumn_img.png)
 
 Customized menu column sample
+
+## Autocomplete column in Shiny
+
+An **autocomplete column** behaves like a text field that suggests
+matching values from a fixed list as the user types — similar to the
+dropdown you see when typing into a search bar. It is the right choice
+when you want users to enter a value but only from a known pool of
+options that is too large to display as a regular menu (think country
+names, product SKUs, currency codes).
+
+How it differs from the other interactive column types:
+
+- `action = "input"` — free text, no suggestions.
+- `action = "inline_menu"` — closed list of choices presented as a
+  dropdown; user picks one and cannot type a new value.
+- `action = "autocomplete"` — user types, sees suggestions filtered
+  against `auto_complete_opts`, and can either pick a suggestion or
+  commit their own text.
+
+To turn a column into an autocomplete column, pass two arguments to
+[`column_def()`](../reference/column_def.md):
+
+- `action = "autocomplete"`
+- `auto_complete_opts = <character vector of suggestions>`
+
+The target column must be of class `character`. Factor and numeric
+columns are rejected with a clear error so the configuration cannot
+silently go wrong.
+
+### Keyboard behavior
+
+Once a cell is open for editing, the autocomplete editor responds to:
+
+- **Typing** — filters `auto_complete_opts` (case-insensitive `includes`
+  match) and displays at most 10 matches.
+- **↑ / ↓** — highlights the previous/next suggestion in the dropdown.
+- **Enter** — commits the highlighted suggestion if one is highlighted;
+  otherwise commits whatever the user typed.
+- **Tab** — same commit behavior as Enter; if
+  `keyboard_options = list(moveCellOnTab = TRUE)` is set on the grid,
+  the selection then moves to the next cell.
+- **Escape** — discards the edit and closes the editor without changing
+  the cell.
+- **Clicking a suggestion** — commits that suggestion.
+- **Clicking elsewhere (blur)** — commits the current text.
+
+When a cell commits, the grid fires its standard `CHANGED_VALUE` event,
+so `input$grid_changed_value` and `get_grid_data()` both update
+reactively as with any other editable column.
+
+### A complete example
+
+``` r
+
+library(shiny)
+library(cheetahR)
+
+# Pool of values the user can pick from.
+countries <- c(
+  "Argentina", "Australia", "Brazil", "Canada", "Chile", "China",
+  "Denmark", "Egypt", "France", "Germany", "Ghana", "India",
+  "Indonesia", "Ireland", "Italy", "Japan", "Kenya", "Mexico",
+  "Netherlands", "Nigeria", "Norway", "Portugal", "Spain", "Sweden",
+  "Switzerland", "Uganda", "United Kingdom", "United States"
+)
+
+# Data must have a character `country` column for the autocomplete editor.
+data <- data.frame(
+  id = 1:6,
+  country = c("France", "Germany", "Ghana", "India", "Italy", "Japan"),
+  population_m = c(67, 84, 33, 1428, 59, 125),
+  stringsAsFactors = FALSE
+)
+
+ui <- fluidPage(
+  h4("Autocomplete editor"),
+  helpText(
+    "Click a cell in 'country', start typing to filter the suggestions,",
+    "then press Enter (or Tab) to commit. Press Escape to cancel."
+  ),
+  cheetahOutput("grid"),
+  h5("Last changed cell"),
+  verbatimTextOutput("last_change"),
+  h5("Current data state"),
+  verbatimTextOutput("data_state")
+)
+
+server <- function(input, output, session) {
+  output$grid <- renderCheetah({
+    cheetah(
+      data,
+      editable = TRUE,
+      rownames = FALSE,
+      # Optional: let Tab also move the selection to the next cell.
+      keyboard_options = list(moveCellOnTab = TRUE),
+      columns = list(
+        country = column_def(
+          action = "autocomplete",
+          auto_complete_opts = countries
+        )
+      )
+    )
+  })
+
+  # Reactive: most recent single-cell edit.
+  output$last_change <- renderPrint({
+    req(input$grid_changed_value)
+    input$grid_changed_value
+  })
+
+  # Reactive: the full grid as a data frame, updated after every edit.
+  output$data_state <- renderPrint({
+    req(get_grid_data("grid"))
+  })
+}
+
+shinyApp(ui, server)
+```
+
+### Common gotchas
+
+- **Suggestion list must be a character vector.** Numbers or factors
+  will not filter correctly; convert with
+  [`as.character()`](https://rdrr.io/r/base/character.html) if needed.
+- **Target column must be `character`.** If you build it from
+  `data.frame(...)`, remember to pass `stringsAsFactors = FALSE` (R ≥
+  4.0 defaults to this, but be explicit when in doubt).
+- **The dropdown shows at most 10 matches**, so users may need to narrow
+  their query if the pool is large. This is a deliberate cap to keep the
+  UI responsive.
+- **Outside Shiny**, the editor still renders in standalone widgets, but
+  the value-change event is only consumed by Shiny — there is no
+  callback to listen to in static reports.
