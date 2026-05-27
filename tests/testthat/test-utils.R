@@ -25,6 +25,53 @@ test_that("test column defintion", {
   )
 })
 
+test_that("autocomplete column_def builds the action config", {
+  col <- column_def(
+    action = "autocomplete",
+    auto_complete_opts = c("France", "Germany")
+  )
+  expect_equal(col$action$type, "autocomplete")
+  expect_equal(col$action$options, c("France", "Germany"))
+})
+
+test_that("autocomplete action requires auto_complete_opts", {
+  expect_error(
+    column_def(action = "autocomplete"),
+    "auto_complete_opts must not be NULL"
+  )
+})
+
+test_that("autocomplete is a valid action type", {
+  expect_invisible(check_action_type("autocomplete"))
+  expect_error(check_action_type("not_a_real_action"), "Invalid action type")
+})
+
+test_that("autocomplete enforces a character target column", {
+  cols <- list(
+    country = list(action = list(type = "autocomplete", options = c("A", "B")))
+  )
+
+  # Character column: accepted.
+  ok <- update_col_list_with_classes(
+    data.frame(country = c("A", "B"), stringsAsFactors = FALSE),
+    cols
+  )
+  expect_equal(ok$country$action$type, "autocomplete")
+
+  # Non-character column: rejected.
+  expect_error(
+    update_col_list_with_classes(
+      data.frame(country = factor(c("A", "B"))),
+      cols
+    ),
+    "can only be applied to a character column"
+  )
+  expect_error(
+    update_col_list_with_classes(data.frame(country = c(1, 2)), cols),
+    "can only be applied to a character column"
+  )
+})
+
 test_that("test column group", {
   expect_type(
     column_group(

@@ -1,6 +1,7 @@
 import 'widgets';
 import { combineColumnsAndGroups, isDefined, arrayToList } from '../modules/utils.js';
 import * as cheetahGrid from "cheetah-grid";
+import { AutocompleteEditor } from '../modules/autocomplete-editor.js';
 
 HTMLWidgets.widget({
 
@@ -79,10 +80,14 @@ HTMLWidgets.widget({
                 obj.columnType = new cheetahGrid.columns.type.MenuColumn({
                   options: obj.action.options,
                 });
-
                 obj.action = new cheetahGrid.columns.action.InlineMenuEditor({
                   options: obj.action.options,
                 });
+              } else if (obj.action.type === "autocomplete") {
+                obj.action = new AutocompleteEditor({
+                  autocompleteOptions: obj.action.options || []
+                });
+                obj.editable = true;
               }
             }
           });
