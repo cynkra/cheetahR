@@ -935,20 +935,20 @@ Customized menu column sample
 ## Autocomplete column in Shiny
 
 An **autocomplete column** behaves like a text field that suggests
-matching values from a fixed list as the user types — similar to the
-dropdown you see when typing into a search bar. It is the right choice
-when you want users to enter a value but only from a known pool of
-options that is too large to display as a regular menu (think country
-names, product SKUs, currency codes).
+matching values from a fixed list as you type, much like the dropdown
+you see when typing into a search bar. Use it when you want users to
+enter a value, but only from a known pool of options that’s too large to
+fit in a regular menu (think country names, product SKUs, currency
+codes).
 
 How it differs from the other interactive column types:
 
-- `action = "input"` — free text, no suggestions.
-- `action = "inline_menu"` — closed list of choices presented as a
-  dropdown; user picks one and cannot type a new value.
-- `action = "autocomplete"` — user types, sees suggestions filtered
-  against `auto_complete_opts`, and can either pick a suggestion or
-  commit their own text.
+- `action = "input"`: free text, no suggestions.
+- `action = "inline_menu"`: a closed list of choices in a dropdown. The
+  user picks one and can’t type something new.
+- `action = "autocomplete"`: the user types, sees matching suggestions
+  from `auto_complete_opts`, and can either pick one or commit their own
+  text.
 
 To turn a column into an autocomplete column, pass two arguments to
 [`column_def()`](../reference/column_def.md):
@@ -956,31 +956,29 @@ To turn a column into an autocomplete column, pass two arguments to
 - `action = "autocomplete"`
 - `auto_complete_opts = <character vector of suggestions>`
 
-The target column must be of class `character`. Factor and numeric
-columns are rejected with a clear error so the configuration cannot
-silently go wrong.
+The target column must be of class `character`. If you pass a factor or
+numeric column, you’ll get a clear error right away.
 
 ### Keyboard behavior
 
 Once a cell is open for editing, the autocomplete editor responds to:
 
-- **Typing** — filters `auto_complete_opts` (case-insensitive `includes`
-  match) and displays at most 10 matches.
-- **↑ / ↓** — highlights the previous/next suggestion in the dropdown.
-- **Enter** — commits the highlighted suggestion if one is highlighted;
-  otherwise commits whatever the user typed.
-- **Tab** — same commit behavior as Enter; if
-  `keyboard_options = list(moveCellOnTab = TRUE)` is set on the grid,
-  the selection then moves to the next cell.
-- **Escape** — discards the edit and closes the editor without changing
-  the cell.
-- **Clicking a suggestion** — commits that suggestion.
-- **Clicking elsewhere (blur)** — commits the current text.
+- **Typing**: filters the suggestions (case-insensitive, matches
+  anywhere in the word) and shows at most 10.
+- **↑ / ↓**: move the highlight up or down through the dropdown.
+- **Enter**: commits the highlighted suggestion. If nothing is
+  highlighted, it commits what you typed.
+- **Tab**: same as Enter. If you also set
+  `keyboard_options = list(moveCellOnTab = TRUE)` on the grid, Tab moves
+  to the next cell after committing.
+- **Escape**: closes the editor without changing the cell.
+- **Clicking a suggestion**: commits that suggestion.
+- **Clicking elsewhere**: commits whatever’s in the input.
 
 When a cell commits, the grid fires its standard `CHANGED_VALUE` event,
 so `input$grid_changed_value` and
 [`get_grid_data()`](../reference/get_grid_data.md) both update
-reactively as with any other editable column.
+reactively, just like any other editable column.
 
 ### A complete example
 
@@ -1054,14 +1052,15 @@ shinyApp(ui, server)
 ### Common gotchas
 
 - **Suggestion list must be a character vector.** Numbers or factors
-  will not filter correctly; convert with
+  won’t filter correctly; convert with
   [`as.character()`](https://rdrr.io/r/base/character.html) if needed.
 - **Target column must be `character`.** If you build it from
   `data.frame(...)`, remember to pass `stringsAsFactors = FALSE` (R ≥
-  4.0 defaults to this, but be explicit when in doubt).
+  4.0 defaults to this, but it’s worth being explicit if you’re not
+  sure).
 - **The dropdown shows at most 10 matches**, so users may need to narrow
-  their query if the pool is large. This is a deliberate cap to keep the
-  UI responsive.
+  their query if the pool is large. The cap is there to keep things
+  snappy.
 - **Outside Shiny**, the editor still renders in standalone widgets, but
-  the value-change event is only consumed by Shiny — there is no
-  callback to listen to in static reports.
+  the value-change event only fires when Shiny is running. There’s no
+  callback you can hook into for static reports.
