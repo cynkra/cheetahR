@@ -67,22 +67,21 @@ progress.
 We welcome contributions! If you’d like to help improve `cheetahR`, feel
 free to submit issues, feature requests, or pull requests.
 
-### Software Pre-requiste
+### Software Pre-requisite
 
 To contribute to this project, some software installations are required,
-such as `npm`, `node`, and `packer`. Please follow the slides attached
-to help you get started
-[pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites).
-Click here to install
-[packer](https://rsc.cynkra.com/js4Shiny/#/solutions).
+such as `npm`, `node`, and the R package
+[packer](https://cran.r-project.org/package=packer). Install `node` /
+`npm` from your platform's usual source and `packer` from CRAN with
+`install.packages("packer")`.
 
 When you are in the project, do the following:
 
 ``` r
 packer::npm_install()
 # Change the code and then rebundle
-packer::bundle("development") # For developement mode
-packer::bundle() # For production. Defaut!
+packer::bundle("development") # For development mode
+packer::bundle() # For production. Default!
 ```
 
 You may as well bundle for `dev` using `packer::bundle_dev()` when in

@@ -17,3 +17,7 @@
 ^README\.Rmd$
 ^vignettes/*_files$
 ^vignettes/\.quarto
+^cran-comments\.md$
+^cheetahR\.Rcheck$
+^cheetahR_.*\.tar\.gz$
+^\.claude$
