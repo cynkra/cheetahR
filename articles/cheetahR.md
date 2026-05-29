@@ -978,7 +978,8 @@ Once a cell is open for editing, the autocomplete editor responds to:
 - **Clicking elsewhere (blur)** — commits the current text.
 
 When a cell commits, the grid fires its standard `CHANGED_VALUE` event,
-so `input$grid_changed_value` and `get_grid_data()` both update
+so `input$grid_changed_value` and
+[`get_grid_data()`](../reference/get_grid_data.md) both update
 reactively as with any other editable column.
 
 ### A complete example

@@ -9,9 +9,13 @@
   [`renderCheetah()`](cheetah-shiny.md) : Shiny bindings for cheetah
 - [`cheetah()`](cheetah.md) : Create a Cheetah Grid widget
 - [`cheetah_proxy()`](cheetah_proxy.md) : Cheetah Grid Proxy
+- [`cheetahr_shiny_utils`](cheetahr_shiny_utils.md) : Shiny utility
+  functions for cheetahR
 - [`column_def()`](column_def.md) : Column definition utility
 - [`column_group()`](column_group.md) : Column group definitions
 - [`delete_row()`](delete_row.md) : Delete a row from a cheetah grid
+- [`get_grid_data()`](get_grid_data.md) : Get the current data state of
+  a cheetah grid
 - [`js_ifelse()`](js_ifelse.md) : Convert an R logical expression into a
   JS ternary expression
 - [`number_format()`](number_format.md)

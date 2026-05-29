@@ -1,5 +1,15 @@
 # Changelog
 
+## cheetahR 0.4.0
+
+- Add `"autocomplete"` column action for typeahead-style cell editing
+  over a fixed list of suggestions, configured via
+  `column_def(action = "autocomplete", auto_complete_opts = ...)`
+- Add [`get_grid_data()`](../reference/get_grid_data.md) Shiny helper to
+  retrieve the current grid data as a reactive data frame
+- Fix [`renderCheetah()`](../reference/cheetah-shiny.md) appending a new
+  grid on re-render instead of replacing the previous one (#51)
+
 ## cheetahR 0.3.0
 
 CRAN release: 2025-07-21

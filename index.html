@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">cheetahR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,15 +104,15 @@
 </h2>
 <p>We welcome contributions! If you’d like to help improve <code>cheetahR</code>, feel free to submit issues, feature requests, or pull requests.</p>
 <div class="section level3">
-<h3 id="software-pre-requiste">Software Pre-requiste<a class="anchor" aria-label="anchor" href="#software-pre-requiste"></a>
+<h3 id="software-pre-requisite">Software Pre-requisite<a class="anchor" aria-label="anchor" href="#software-pre-requisite"></a>
 </h3>
-<p>To contribute to this project, some software installations are required, such as <code>npm</code>, <code>node</code>, and <code>packer</code>. Please follow the slides attached to help you get started <a href="https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites" class="external-link">pre-requisites</a>. Click here to install <a href="https://rsc.cynkra.com/js4Shiny/#/solutions" class="external-link">packer</a>.</p>
+<p>To contribute to this project, some software installations are required, such as <code>npm</code>, <code>node</code>, and the R package <a href="https://cran.r-project.org/package=packer" class="external-link">packer</a>. Install <code>node</code> / <code>npm</code> from your platform’s usual source and <code>packer</code> from CRAN with <code>install.packages("packer")</code>.</p>
 <p>When you are in the project, do the following:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">packer</span><span class="fu">::</span><span class="fu">npm_install</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Change the code and then rebundle</span></span>
-<span><span class="fu">packer</span><span class="fu">::</span><span class="fu">bundle</span><span class="op">(</span><span class="st">"development"</span><span class="op">)</span> <span class="co"># For developement mode</span></span>
-<span><span class="fu">packer</span><span class="fu">::</span><span class="fu">bundle</span><span class="op">(</span><span class="op">)</span> <span class="co"># For production. Defaut!</span></span></code></pre></div>
+<span><span class="fu">packer</span><span class="fu">::</span><span class="fu">bundle</span><span class="op">(</span><span class="st">"development"</span><span class="op">)</span> <span class="co"># For development mode</span></span>
+<span><span class="fu">packer</span><span class="fu">::</span><span class="fu">bundle</span><span class="op">(</span><span class="op">)</span> <span class="co"># For production. Default!</span></span></code></pre></div>
 <p>You may as well bundle for <code>dev</code> using <code>packer::bundle_dev()</code> when in developer mode and when ready for production use <code>packer::bundle_prod()</code>. You may also consider <code>watch()</code> which watches for changes in the <code>srcjs</code> and rebuilds if necessary, equivalent to <code>⁠npm run watch⁠</code>.</p>
 </div>
 <div class="section level3">

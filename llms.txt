@@ -59,14 +59,13 @@ progress.
 We welcome contributions! If you’d like to help improve `cheetahR`, feel
 free to submit issues, feature requests, or pull requests.
 
-### Software Pre-requiste
+### Software Pre-requisite
 
 To contribute to this project, some software installations are required,
-such as `npm`, `node`, and `packer`. Please follow the slides attached
-to help you get started
-[pre-requisites](https://rsc.cynkra.com/js4Shiny/#/software-pre-requisites).
-Click here to install
-[packer](https://rsc.cynkra.com/js4Shiny/#/solutions).
+such as `npm`, `node`, and the R package
+[packer](https://cran.r-project.org/package=packer). Install `node` /
+`npm` from your platform’s usual source and `packer` from CRAN with
+`install.packages("packer")`.
 
 When you are in the project, do the following:
 
@@ -74,8 +73,8 @@ When you are in the project, do the following:
 
 packer::npm_install()
 # Change the code and then rebundle
-packer::bundle("development") # For developement mode
-packer::bundle() # For production. Defaut!
+packer::bundle("development") # For development mode
+packer::bundle() # For production. Default!
 ```
 
 You may as well bundle for `dev` using `packer::bundle_dev()` when in
@@ -117,9 +116,13 @@ library.
   [`renderCheetah()`](cheetah-shiny.md) : Shiny bindings for cheetah
 - [`cheetah()`](cheetah.md) : Create a Cheetah Grid widget
 - [`cheetah_proxy()`](cheetah_proxy.md) : Cheetah Grid Proxy
+- [`cheetahr_shiny_utils`](cheetahr_shiny_utils.md) : Shiny utility
+  functions for cheetahR
 - [`column_def()`](column_def.md) : Column definition utility
 - [`column_group()`](column_group.md) : Column group definitions
 - [`delete_row()`](delete_row.md) : Delete a row from a cheetah grid
+- [`get_grid_data()`](get_grid_data.md) : Get the current data state of
+  a cheetah grid
 - [`js_ifelse()`](js_ifelse.md) : Convert an R logical expression into a
   JS ternary expression
 - [`number_format()`](number_format.md)
