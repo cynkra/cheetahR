@@ -2,6 +2,8 @@
 
 ## cheetahR 0.4.0
 
+CRAN release: 2026-06-02
+
 - Add `"autocomplete"` column action for typeahead-style cell editing
   over a fixed list of suggestions, configured via
   `column_def(action = "autocomplete", auto_complete_opts = ...)`
