@@ -15,7 +15,7 @@ test_that("js_ifelse conversion", {
 
   # Combined logic
   expr <- js_ifelse(Sepal.Length > 5 & Species %notin% c("setosa"), "E", "X")
-  expect_true(grepl("rec['Sepal.Length'] > 5 && !['setosa'].includes", expr, fixed = TRUE))
+  expect_match(expr, "rec['Sepal.Length'] > 5 && !['setosa'].includes", fixed = TRUE)
 
   # Truthiness of bare variable
   expect_equal(

@@ -25,7 +25,7 @@ test_that("get_grid_data() returns data frame when grid_data_state is set", {
   out <- get_grid_data("grid", session = session)
   expect_s3_class(out, "data.frame")
   expect_equal(nrow(out), 3L)
-  expect_equal(names(out), c("mpg", "cyl", "disp"))
+  expect_named(out, c("mpg", "cyl", "disp"))
   expect_equal(out$mpg, c(21, 21, 22.8))
 })
 
@@ -40,7 +40,7 @@ test_that("get_grid_data() with handle_rownames = TRUE uses first column as row 
   out <- get_grid_data("grid", session = session, handle_rownames = TRUE)
   expect_s3_class(out, "data.frame")
   expect_equal(rownames(out), c("a", "b", "c"))
-  expect_equal(names(out), c("x", "y"))
+  expect_named(out, c("x", "y"))
 })
 
 test_that("get_grid_data() with handle_rownames = 'colname' uses that column as row names", {
@@ -54,7 +54,7 @@ test_that("get_grid_data() with handle_rownames = 'colname' uses that column as 
   out <- get_grid_data("grid", session = session, handle_rownames = "label")
   expect_s3_class(out, "data.frame")
   expect_equal(rownames(out), c("A", "B", "C"))
-  expect_equal(names(out), c("x", "y"))
+  expect_named(out, c("x", "y"))
 })
 
 test_that("get_grid_data() with handle_rownames = FALSE keeps all columns", {
@@ -66,6 +66,6 @@ test_that("get_grid_data() with handle_rownames = FALSE keeps all columns", {
 
   out <- get_grid_data("grid", session = session, handle_rownames = FALSE)
   expect_s3_class(out, "data.frame")
-  expect_equal(names(out), c("id", "value"))
+  expect_named(out, c("id", "value"))
   expect_equal(out$id, c("a", "b"))
 })
